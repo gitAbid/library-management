@@ -3,7 +3,7 @@ import bodyParser from 'body-parser'
 import {bookRouter} from './routes/book'
 import {config} from './config/config';
 // import {authorRouter} from './routes/author'
-// import {bookLoanRouter} from "./routes/book_loan";
+import {bookLoanRouter} from "./routes/book_loan";
 import mongoose from 'mongoose'
 
 const app = express()
@@ -20,7 +20,7 @@ app.use(bodyParser.json())
 
 app.use('/books', bookRouter)
 // app.use('/authors',authorRouter)
-// app.use('/book.ts-loans',bookLoanRouter)
+app.use('/book-loans',bookLoanRouter)
 
 app.get('/', (req:Request, res:Response) => {
     res.send("Welcome to Home page")
