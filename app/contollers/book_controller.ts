@@ -6,7 +6,7 @@ import mongoose from "mongoose";
 export const getBooks = (req: Request, res: Response) => {
     Book.find()
         .exec()
-        .then((result: IBook) => {
+        .then((result) => {
             return res.status(200).json(result)
         }).catch((error: any) => {
         console.log(error)
@@ -17,7 +17,7 @@ export const getBooksById = (req: Request, res: Response) => {
     let {id} = req.params
     Book.findById(id)
         .exec()
-        .then((result: IBook) => {
+        .then((result) => {
             if (result) {
                 return res.status(200).json(result)
             } else {
