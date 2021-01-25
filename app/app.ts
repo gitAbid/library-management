@@ -4,17 +4,17 @@ import {bookRouter} from './routes/book'
 import {config} from './config/config';
 // import {authorRouter} from './routes/author'
 // import {bookLoanRouter} from "./routes/book_loan";
-// import mongoose from 'mongoose'
+import mongoose from 'mongoose'
 
 const app = express()
 
-// mongoose.connect(config.mongo.url, config.mongo.options)
-//     .then((result) => {
-//         console.log("Mongo Connected Success")
-//     })
-//     .catch((error) => {
-//         console.log("Error occurred", error)
-//     })
+mongoose.connect(config.mongo.url, config.mongo.options)
+    .then((result) => {
+        console.log("Mongo Connected Success")
+    })
+    .catch((error) => {
+        console.log("Error occurred", error)
+    })
 
 app.use(bodyParser.json())
 
@@ -27,4 +27,4 @@ app.get('/', (req:Request, res:Response) => {
 })
 
 
-app.listen(3000);
+app.listen(config.server.port);
