@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import mongoose from "mongoose";
 import IBook from "../interfaces/book";
-import IBookLoan from "../interfaces/book_loan";
+import IBookLoan, { LoanState } from "../interfaces/book_loan";
 import BookLoan from "../models/book_loan";
 import BookLoanRepositroy from "../repositorty/book_loan_repo";
 import BookRepositroy from "../repositorty/book_repo";
@@ -60,7 +60,7 @@ export default class BookLoanController {
     bookLoanRepo.findById(loanId, function (loan: IBookLoan, err: any) {
       if (err) {
         handleError(res, err);
-      } else if (loan) {
+      } else if (loan && loan.loanState === LoanState[LoanState.NEW]) {
         bookRep.findById(loan.bookId, (book: IBook, err: any) => {
           if (err) {
             handleError(res, err);
@@ -70,7 +70,7 @@ export default class BookLoanController {
             book.isLoaned = true;
 
             bookRep.update(book, (book: IBook, err: any) => {
-              loan.isLoanAccepeted = true;
+              loan.loanState = LoanState[LoanState.ACCEPTED];
 
               bookLoanRepo.update(loan, (loan: IBookLoan, err: any) => {
                 if (err) {
@@ -85,10 +85,30 @@ export default class BookLoanController {
           }
         });
       } else {
-        handleFailed(res, `No Loan found with id ${loanId}`);
+        handleFailed(res, `No valid loan found to accept with id ${loanId}`);
       }
     });
   };
 
-  rejectLoanRequest = (req: Request, res: Response) => {};
+  rejectLoanRequest = (req: Request, res: Response) => {
+    let { loanId } = req.body;
+
+    bookLoanRepo.findById(loanId, function (loan: IBookLoan, err: any) {
+      if (err) {
+        handleError(res, err);
+      } else if (loan && loan.loanState === LoanState[LoanState.NEW]) {
+        loan.loanState = LoanState[LoanState.REJECTED];
+
+        bookLoanRepo.update(loan, (loan: IBookLoan, err: any) => {
+          if (err) {
+            handleError(res, err);
+          } else {
+            handleSuccess(res, `Loan application rejected`, loan);
+          }
+        });
+      } else {
+        handleFailed(res, `No valid loan found to reject with id ${loanId}`);
+      }
+    });
+  };
 }

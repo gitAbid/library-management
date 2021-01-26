@@ -10,7 +10,7 @@ bookLoanRouter.get("/", bookLoanController.getAllBookLoanRequests);
 
 bookLoanRouter.post("/accept", bookLoanController.acceptLoanRequest);
 
-
+bookLoanRouter.post("/reject", bookLoanController.rejectLoanRequest);
 
 
 export { bookLoanRouter };
