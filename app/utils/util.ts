@@ -1,4 +1,6 @@
 import { Response } from "express";
+import monmongoose from "mongoose";
+import IAuthor from "../interfaces/author";
 
 export const handleSuccess = (
   res: Response<any, Record<string, any>>,
@@ -31,5 +33,20 @@ export const handleError = (
     message: err.message,
     error: err,
     data: null,
+  });
+};
+
+export const forignKeyValidator = (model: monmongoose.Model<IAuthor>, id: string) => {
+  return new Promise((resolve, reject) => {
+    model.findOne({ _id: id }, (err: any, result: IAuthor) => {
+      if (result) {
+        return resolve(true);
+      } else
+        return reject(
+          new Error(
+            `FK Constraint 'checkObjectsExists' for '${id.toString()}' failed`
+          )
+        );
+    });
   });
 };

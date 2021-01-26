@@ -50,7 +50,7 @@ export default class BookRepositroy {
         callback(savedBook, null);
       })
       .catch((error) => {
-        console.log(error);
+        console.log("OnUpdateCall",error);
         callback(null, error);
       });
   };

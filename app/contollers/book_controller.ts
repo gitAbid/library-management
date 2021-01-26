@@ -24,6 +24,7 @@ export const allBooks = (req: Request, res: Response) => {
     }
   });
 };
+
 export const getBookAuthors = (req: Request, res: Response) => {
   const { bookId } = req.params;
   bookAuthorRepo.findByBookId(
@@ -62,15 +63,13 @@ export const getBookById = (req: Request, res: Response) => {
 export const addBook = (req: Request, res: Response) => {
   let { title, authors } = req.body;
 
-  let ids: Array<mongoose.Types.ObjectId> = getIds(authors);
-
   const book = new Book(req.body);
 
   bookRepo.update(book, (updatedBook: IBook, err: any) => {
     if (err) {
       handleError(res, err);
     } else {
-      updateAuthorBookRelation(ids, book, res);
+      updateAuthorBookRelation(getIds(updatedBook.authors), book, res);
       res.status(201).json(updatedBook);
     }
   });
@@ -80,24 +79,17 @@ export const updateBook = (req: Request, res: Response) => {
   let { id } = req.params;
   let { title, authors } = req.body;
 
-  let ids: Array<mongoose.Types.ObjectId> = getIds(authors);
-
   bookRepo.findById(id, (book: IBook, err: any) => {
     if (err) {
       handleError(res, err);
     } else if (book) {
       book.title = title;
-      bookAuthorRepo.deleteByBookId(id, (result: any, err: any) => {
-        if (err) {
-          handleError(res, err);
-        }
-      });
 
-      updateAuthorBookRelation(ids, book, res);
       bookRepo.update(book, (updateBook: IBook, err: any) => {
         if (err) {
           handleError(res, err);
         } else {
+          updateAuthorBookRelation(getIds(updateBook.authors), book, res);
           return res.status(200).json(updateBook);
         }
       });
@@ -136,19 +128,15 @@ export const patchBook = (req: Request, res: Response) => {
       if (title) {
         book.title = title;
       }
-      if (ids.length > 1) {
-        bookAuthorRepo.deleteByBookId(id, (result: any, err: any) => {
-          if (err) {
-            handleError(res, err);
-          } else {
-            updateAuthorBookRelation(ids, book, res);
-          }
-        });
+      if (authors && authors.length>0) {
+        book.authors=authors;
       }
+
       bookRepo.update(book, (updateBook: IBook, err: any) => {
         if (err) {
           handleError(res, err);
         } else {
+          updateAuthorBookRelation(getIds(updateBook.authors), book, res);
           return res.status(200).json(updateBook);
         }
       });
@@ -175,6 +163,12 @@ function updateAuthorBookRelation(
   book: IBook,
   res: Response<any, Record<string, any>>
 ) {
+  bookAuthorRepo.deleteByBookId(book._id, (result: any, err: any) => {
+    if (err) {
+      handleError(res, err);
+    }
+  });
+
   authorRepo.findAuthorByIds(ids, (authors: Array<IAuthor>, err: any) => {
     authors?.forEach((author) => {
       const bookAuthor = new BookAuthor({
