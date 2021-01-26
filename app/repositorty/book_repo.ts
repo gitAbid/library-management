@@ -25,6 +25,7 @@ export default class BookRepositroy {
       });
   };
 
+
   update = (book: IBook, callback: Function) => {
     book
       .save()

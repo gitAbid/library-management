@@ -27,6 +27,22 @@ export default class BookLoanRepositroy {
       });
   };
 
+  findByBookIdAndUsername = (
+    bookId: string,
+    username: string,
+    callback: Function
+  ) => {
+    BookLoan.find({ bookId: bookId, username: username })
+      .exec()
+      .then((loans) => {
+        callback(loans, null);
+      })
+      .catch((error) => {
+        console.log(error);
+        callback(null, error);
+      });
+  };
+
   update = (book: IBookLoan, callback: Function) => {
     book
       .save()

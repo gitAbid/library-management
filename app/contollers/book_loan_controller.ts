@@ -17,31 +17,43 @@ export default class BookLoanController {
     //from jwt token
     let username = "dummyUser";
 
-    bookRep.findById(bookId, (book: IBook, err: any) => {
-      if (err) {
-        handleError(res, err);
-      } else if (book) {
-        if (book.isLoaned === true) {
-          handleFailed(res, "Book is already loaned");
+    bookLoanRepo.findByBookIdAndUsername(
+      bookId,
+      username,
+      (loans: Array<IBookLoan>, err: any) => {
+        if (err) {
+          handleError(res, err);
+        } else if (loans && loans.length > 0) {
+          handleFailed(res, `Already pending request exists for book`);
         } else {
-          const bookLoan = new BookLoan({
-            _id: new mongoose.Types.ObjectId(),
-            bookId: book.id,
-            username: username,
-          });
-
-          bookLoanRepo.update(bookLoan, (loan: IBookLoan, err: any) => {
+          bookRep.findById(bookId, (book: IBook, err: any) => {
             if (err) {
               handleError(res, err);
+            } else if (book) {
+              if (book.isLoaned === true) {
+                handleFailed(res, "Book is already loaned");
+              } else {
+                const bookLoan = new BookLoan({
+                  _id: new mongoose.Types.ObjectId(),
+                  bookId: book.id,
+                  username: username,
+                });
+
+                bookLoanRepo.update(bookLoan, (loan: IBookLoan, err: any) => {
+                  if (err) {
+                    handleError(res, err);
+                  } else {
+                    handleSuccess(res, "Book loan request successful", loan);
+                  }
+                });
+              }
             } else {
-              handleSuccess(res, "Book loan request successful", loan);
+              handleFailed(res, `No book found with id ${bookId}`);
             }
           });
         }
-      } else {
-        handleFailed(res, `No book found with id ${bookId}`);
       }
-    });
+    );
   };
 
   getAllBookLoanRequests = (req: Request, res: Response) => {
