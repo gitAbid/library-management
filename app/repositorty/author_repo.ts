@@ -1,13 +1,12 @@
-import IBook from "../interfaces/book";
-import Book from "../models/book";
+import IAuthor from "../interfaces/author";
+import Author from "../models/author";
 import mongoose from "mongoose";
-
-export default class BookRepositroy {
+export default class AuthorRepsoitory {
   findById = (id: string, callback: Function) => {
-    Book.findById(id)
+    Author.findById(id)
       .exec()
-      .then((book) => {
-        callback(book, null);
+      .then((author) => {
+        callback(author, null);
       })
       .catch((error) => {
         console.log(error);
@@ -16,10 +15,10 @@ export default class BookRepositroy {
   };
 
   findAllBook = (callback: Function) => {
-    Book.find()
+    Author.find()
       .exec()
-      .then((books) => {
-        callback(books, null);
+      .then((authors) => {
+        callback(authors, null);
       })
       .catch((error) => {
         console.log(error);
@@ -31,23 +30,12 @@ export default class BookRepositroy {
     ids: Array<mongoose.Types.ObjectId>,
     callback: Function
   ) => {
-    Book.find({
+    Author.find({
       _id: { $in: ids },
     })
       .exec()
-      .then((books) => {
-        callback(books, null);
-      })
-      .catch((error) => {
-        console.log(error);
-        callback(null, error);
-      });
-  };
-  update = (book: IBook, callback: Function) => {
-    book
-      .save()
-      .then((savedBook) => {
-        callback(savedBook, null);
+      .then((authors) => {
+        callback(authors, null);
       })
       .catch((error) => {
         console.log(error);
@@ -55,15 +43,15 @@ export default class BookRepositroy {
       });
   };
 
-  deleteById=(id:string,callback:Function)=>{
-    Book.findByIdAndDelete(id)
-    .exec()
-    .then((book) => {
-      callback(book, null);
-    })
-    .catch((error) => {
-      console.log(error);
-      callback(null, error);
-    });
-  }
+  update = (author: IAuthor, callback: Function) => {
+    author
+      .save()
+      .then((savedAuthor) => {
+        callback(savedAuthor, null);
+      })
+      .catch((error) => {
+        console.log(error);
+        callback(null, error);
+      });
+  };
 }

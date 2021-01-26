@@ -2,7 +2,7 @@ import express, { Request, Response } from "express";
 import bodyParser from "body-parser";
 import { bookRouter } from "./routes/book";
 import { config } from "./config/config";
-// import {authorRouter} from './routes/author'
+import { authorRouter } from "./routes/author";
 import { bookLoanRouter } from "./routes/book_loan";
 import mongoose from "mongoose";
 
@@ -20,7 +20,7 @@ mongoose
 app.use(bodyParser.json());
 
 app.use("/books", bookRouter);
-// app.use('/authors',authorRouter)
+app.use('/authors',authorRouter)
 app.use("/book-loans", bookLoanRouter);
 
 app.get("/", (req: Request, res: Response) => {

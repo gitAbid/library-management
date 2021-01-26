@@ -6,15 +6,24 @@ import {
   getBookById,
   patchBook,
   updateBook,
+  getBookAuthors
 } from "../contollers/book_controller";
 
 const bookRouter = express.Router();
 
-bookRouter.get("/", allBooks);
-bookRouter.get("/:id", getBookById);
-bookRouter.post("/", addBook);
-bookRouter.patch("/:id", patchBook);
-bookRouter.put("/:id", updateBook);
-bookRouter.delete("/:id", deleteBook);
+bookRouter
+  .route("/")
+  .get(allBooks)
+  .post(addBook);
 
+bookRouter
+  .route("/:id")
+  .get(getBookById)
+  .patch(patchBook)
+  .put(updateBook)
+  .delete(deleteBook);
+
+bookRouter
+  .route("/:bookId/authors")
+  .get(getBookAuthors)
 export { bookRouter };

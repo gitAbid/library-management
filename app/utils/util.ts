@@ -16,7 +16,7 @@ export const handleFailed = (
   res: Response<any, Record<string, any>>,
   message: string
 ) => {
-  res.status(200).json({
+  res.status(400).json({
     status: "FAILED",
     message: message,
     data: null,
