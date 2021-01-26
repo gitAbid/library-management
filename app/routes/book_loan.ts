@@ -1,13 +1,14 @@
 import express from "express";
-import { requestBookLoan, allBookLoanRequests,acceptLoanRequest } from "../contollers/book_loan_controller";
+import BookLoanController from "../contollers/book_loan_controller";
 
 const bookLoanRouter = express.Router();
+const bookLoanController=new BookLoanController()
 
-bookLoanRouter.post("/request/", requestBookLoan);
+bookLoanRouter.post("/request/", bookLoanController.requestBookLoan);
 
-bookLoanRouter.get("/", allBookLoanRequests);
+bookLoanRouter.get("/", bookLoanController.getAllBookLoanRequests);
 
-bookLoanRouter.post("/accept", acceptLoanRequest);
+bookLoanRouter.post("/accept", bookLoanController.acceptLoanRequest);
 
 
 
