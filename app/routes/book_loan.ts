@@ -4,13 +4,15 @@ import BookLoanController from "../contollers/book_loan_controller";
 const bookLoanRouter = express.Router();
 const bookLoanController=new BookLoanController()
 
-bookLoanRouter.post("/request/", bookLoanController.requestBookLoan);
+bookLoanRouter.post("/:bookId/request/", bookLoanController.requestBookLoan);
+
+bookLoanRouter.post("/:bookId/return/", bookLoanController.returnBookLoan);
 
 bookLoanRouter.get("/", bookLoanController.getAllBookLoanRequests);
 
-bookLoanRouter.post("/accept", bookLoanController.acceptLoanRequest);
+bookLoanRouter.post("/:loanId/accept", bookLoanController.acceptLoanRequest);
 
-bookLoanRouter.post("/reject", bookLoanController.rejectLoanRequest);
+bookLoanRouter.post("/:loanId/reject", bookLoanController.rejectLoanRequest);
 
 
 export { bookLoanRouter };

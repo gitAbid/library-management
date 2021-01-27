@@ -1,6 +1,9 @@
 import {Document} from 'mongoose'
 
 export default interface IAuthor extends Document {
-    title: string,
-    isLoaned: boolean
+    name: string,
+    birthday:string,
+    age:string,
+    country:string,
+    bio:string
 }

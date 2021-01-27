@@ -1,10 +1,11 @@
 import express, { Request, Response } from "express";
-import bodyParser from "body-parser";
 import { bookRouter } from "./routes/book";
 import { config } from "./config/config";
 import { authorRouter } from "./routes/author";
 import { bookLoanRouter } from "./routes/book_loan";
+import { userRouter } from "./routes/user";
 import mongoose from "mongoose";
+import { authenticate } from "./middleware/auth";
 
 const app = express();
 
@@ -17,12 +18,12 @@ mongoose
     console.log("Error occurred", error);
   });
 
-app.use(bodyParser.json());
+app.use(express.json());
 
-app.use("/books", bookRouter);
-app.use('/authors',authorRouter)
-app.use("/book-loans", bookLoanRouter);
-
+app.use("/books", authenticate, bookRouter);
+app.use("/authors", authenticate, authorRouter);
+app.use("/book-loans", authenticate, bookLoanRouter);
+app.use("/users", userRouter);
 app.get("/", (req: Request, res: Response) => {
   res.send("Welcome to Home page");
 });

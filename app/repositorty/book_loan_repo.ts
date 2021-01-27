@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import IBookLoan from "../interfaces/book_loan";
+import IBookLoan, { LoanState } from "../interfaces/book_loan";
 import BookLoan from "../models/book_loan";
 
 export default class BookLoanRepositroy {
@@ -27,15 +27,15 @@ export default class BookLoanRepositroy {
       });
   };
 
-  findByBookIdAndUsername = (
+  findNewBookLoanByBookIdAndUsername = (
     bookId: string,
     username: string,
     callback: Function
   ) => {
-    BookLoan.find({ bookId: bookId, username: username })
+    BookLoan.findOne({ bookId: bookId, username: username,loanState: LoanState[LoanState.NEW] })
       .exec()
-      .then((loans) => {
-        callback(loans, null);
+      .then((loan) => {
+        callback(loan, null);
       })
       .catch((error) => {
         console.log(error);

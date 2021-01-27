@@ -12,26 +12,27 @@ const bookRep = new BookRepositroy();
 
 export default class BookLoanController {
   requestBookLoan = (req: Request, res: Response) => {
-    let { bookId } = req.body;
+    let { bookId } = req.params;
 
     //from jwt token
     let username = "dummyUser";
 
-    bookLoanRepo.findByBookIdAndUsername(
+    bookLoanRepo.findNewBookLoanByBookIdAndUsername(
       bookId,
       username,
-      (loans: Array<IBookLoan>, err: any) => {
+      (loan: IBookLoan, err: any) => {
         if (err) {
           handleError(res, err);
-        } else if (loans && loans.length > 0) {
+        } else if (loan) {
+          console.log(loan);
           handleFailed(res, `Already pending request exists for book`);
         } else {
           bookRep.findById(bookId, (book: IBook, err: any) => {
             if (err) {
               handleError(res, err);
             } else if (book) {
-              if (book.isLoaned === true) {
-                handleFailed(res, "Book is already loaned");
+              if (!isBookAvailableForLoan(book)) {
+                handleFailed(res, "No more book is available for loan");
               } else {
                 const bookLoan = new BookLoan({
                   _id: new mongoose.Types.ObjectId(),
@@ -55,6 +56,61 @@ export default class BookLoanController {
       }
     );
   };
+  returnBookLoan = (req: Request, res: Response) => {
+    let { bookId } = req.params;
+
+    //from jwt token
+    let username = "dummyUser";
+
+    bookLoanRepo.findNewBookLoanByBookIdAndUsername(
+      bookId,
+      username,
+      (loan: IBookLoan, err: any) => {
+        if (err) {
+          handleError(res, err);
+        } else if (loan) {
+          if (loan.loanState === LoanState[LoanState.ACCEPTED]) {
+            bookRep.findById(loan.bookId, (book: IBook, err: any) => {
+              if (err) {
+                handleError(res, err);
+              } else if (book) {
+                book.loanCount = book.loanCount - 1;
+                bookRep.update(book, (updatedBook: IBook, err: any) => {
+                  if (err) {
+                    handleError(res, err);
+                  } else {
+                    loan.loanState = LoanState[LoanState.RETURNED];
+                    bookLoanRepo.update(
+                      loan,
+                      (updateLoan: IBookLoan, err: any) => {
+                        if (err) {
+                          handleError(res, err);
+                        } else {
+                          handleSuccess(res, "Book return successful", loan);
+                        }
+                      }
+                    );
+                  }
+                });
+              } else {
+                handleFailed(res, `Book with id ${bookId} no longer availabe`);
+              }
+            });
+          } else {
+            handleFailed(
+              res,
+              "Book loan in not ACCEPTED state. Failed to returned to book"
+            );
+          }
+        } else {
+          handleFailed(
+            res,
+            `No loan found for bookId ${bookId} for username ${username}`
+          );
+        }
+      }
+    );
+  };
 
   getAllBookLoanRequests = (req: Request, res: Response) => {
     bookLoanRepo.findAllBookLoans((loans: Array<IBookLoan>, err: any) => {
@@ -67,60 +123,75 @@ export default class BookLoanController {
   };
 
   acceptLoanRequest = (req: Request, res: Response) => {
-    let { loanId } = req.body;
+    let { loanId } = req.params;
 
     bookLoanRepo.findById(loanId, function (loan: IBookLoan, err: any) {
       if (err) {
         handleError(res, err);
-      } else if (loan && loan.loanState === LoanState[LoanState.NEW]) {
-        bookRep.findById(loan.bookId, (book: IBook, err: any) => {
-          if (err) {
-            handleError(res, err);
-          }
+      } else if (loan) {
+        if (loan.loanState === LoanState[LoanState.NEW]) {
+          bookRep.findById(loan.bookId, (book: IBook, err: any) => {
+            if (err) {
+              handleError(res, err);
+            }
 
-          if (book && book.isLoaned === false) {
-            book.isLoaned = true;
+            if (book && isBookAvailableForLoan(book)) {
+              book.loanCount = book.loanCount + 1;
+              bookRep.update(book, (book: IBook, err: any) => {
+                loan.loanState = LoanState[LoanState.ACCEPTED];
 
-            bookRep.update(book, (book: IBook, err: any) => {
-              loan.loanState = LoanState[LoanState.ACCEPTED];
-
-              bookLoanRepo.update(loan, (loan: IBookLoan, err: any) => {
-                if (err) {
-                  handleError(res, err);
-                } else {
-                  handleSuccess(res, `Loan application accepted`, loan);
-                }
+                bookLoanRepo.update(loan, (loan: IBookLoan, err: any) => {
+                  if (err) {
+                    handleError(res, err);
+                  } else {
+                    handleSuccess(res, `Loan application accepted`, loan);
+                  }
+                });
               });
-            });
-          } else {
-            handleFailed(res, `Book is no longer available with for loan`);
-          }
-        });
+            } else {
+              handleFailed(res, `Book is no longer available with for loan`);
+            }
+          });
+        } else {
+          handleFailed(
+            res,
+            "Book loan in not NEW state. Failed to ACCEPT book loan"
+          );
+        }
       } else {
-        handleFailed(res, `No valid loan found to accept with id ${loanId}`);
+        handleFailed(res, `No book loan found to accept with id ${loanId}`);
       }
     });
   };
 
   rejectLoanRequest = (req: Request, res: Response) => {
-    let { loanId } = req.body;
+    let { loanId } = req.params;
 
     bookLoanRepo.findById(loanId, function (loan: IBookLoan, err: any) {
       if (err) {
         handleError(res, err);
-      } else if (loan && loan.loanState === LoanState[LoanState.NEW]) {
+      } else if (loan) {
         loan.loanState = LoanState[LoanState.REJECTED];
-
-        bookLoanRepo.update(loan, (loan: IBookLoan, err: any) => {
-          if (err) {
-            handleError(res, err);
-          } else {
-            handleSuccess(res, `Loan application rejected`, loan);
-          }
-        });
+        if (loan.loanState === LoanState[LoanState.NEW]) {
+          bookLoanRepo.update(loan, (loan: IBookLoan, err: any) => {
+            if (err) {
+              handleError(res, err);
+            } else {
+              handleSuccess(res, `Loan application rejected`, loan);
+            }
+          });
+        } else {
+          handleFailed(
+            res,
+            "Book loan in not NEW state. Failed to REJECT book loan"
+          );
+        }
       } else {
         handleFailed(res, `No valid loan found to reject with id ${loanId}`);
       }
     });
   };
+}
+function isBookAvailableForLoan(book: IBook) {
+  return book.inventoryCount > book.loanCount;
 }

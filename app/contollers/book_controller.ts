@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import mongoose from "mongoose";
 import IBook from "../interfaces/book";
-import author from "../models/author";
 import Book from "../models/book";
 import BookRepositroy from "../repositorty/book_repo";
 import AuthorRepsoitory from "../repositorty/author_repo";
@@ -33,7 +32,7 @@ export const getBookAuthors = (req: Request, res: Response) => {
       if (err) {
         handleError(res, err);
       } else {
-        authorRepo.findAuthorByIds(
+        authorRepo.findAuthorsByIds(
           bookAuthors?.map((bookAuthor) =>
             mongoose.Types.ObjectId(bookAuthor.authorId)
           ),
@@ -61,15 +60,13 @@ export const getBookById = (req: Request, res: Response) => {
 };
 
 export const addBook = (req: Request, res: Response) => {
-  let { title, authors } = req.body;
-
   const book = new Book(req.body);
 
   bookRepo.update(book, (updatedBook: IBook, err: any) => {
     if (err) {
       handleError(res, err);
     } else {
-      updateAuthorBookRelation(getIds(updatedBook.authors), book, res);
+      updateAuthorBookRelation(book, res);
       res.status(201).json(updatedBook);
     }
   });
@@ -77,19 +74,18 @@ export const addBook = (req: Request, res: Response) => {
 
 export const updateBook = (req: Request, res: Response) => {
   let { id } = req.params;
-  let { title, authors } = req.body;
+  let reqBook = new Book(req.body);
 
   bookRepo.findById(id, (book: IBook, err: any) => {
     if (err) {
       handleError(res, err);
     } else if (book) {
-      book.title = title;
-
+      updateBookInfo(book, reqBook);
       bookRepo.update(book, (updateBook: IBook, err: any) => {
         if (err) {
           handleError(res, err);
         } else {
-          updateAuthorBookRelation(getIds(updateBook.authors), book, res);
+          updateAuthorBookRelation(updateBook, res);
           return res.status(200).json(updateBook);
         }
       });
@@ -117,29 +113,14 @@ export const deleteBook = (req: Request, res: Response) => {
 
 export const patchBook = (req: Request, res: Response) => {
   let { id } = req.params;
-  let { title, authors } = req.body;
-
-  let ids: Array<mongoose.Types.ObjectId> = getIds(authors);
-
-  bookRepo.findById(id, (book: IBook, err: any) => {
+  const book = new Book(req.body);
+  book._id = id;
+  bookRepo.findByIdAndUpdate(id, book, (updateBook: IBook, err: any) => {
     if (err) {
       handleError(res, err);
     } else if (book) {
-      if (title) {
-        book.title = title;
-      }
-      if (authors && authors.length>0) {
-        book.authors=authors;
-      }
-
-      bookRepo.update(book, (updateBook: IBook, err: any) => {
-        if (err) {
-          handleError(res, err);
-        } else {
-          updateAuthorBookRelation(getIds(updateBook.authors), book, res);
-          return res.status(200).json(updateBook);
-        }
-      });
+      updateAuthorBookRelation(book, res);
+      return res.status(200).json(updateBook);
     } else {
       return res.status(404).json({
         message: `No book found with id ${id}`,
@@ -147,6 +128,15 @@ export const patchBook = (req: Request, res: Response) => {
     }
   });
 };
+
+function updateBookInfo(book: IBook, reqBook: IBook) {
+  book.title = reqBook.title;
+  book.authors = reqBook.authors;
+  book.isbn = reqBook.isbn;
+  book.description = reqBook.description;
+  book.category = reqBook.category;
+  book.inventoryCount=reqBook.inventoryCount
+}
 
 function getIds(authors: any) {
   let authorIds: Array<Object> = authors;
@@ -159,17 +149,17 @@ function getIds(authors: any) {
 }
 
 function updateAuthorBookRelation(
-  ids: mongoose.Types.ObjectId[],
   book: IBook,
   res: Response<any, Record<string, any>>
 ) {
+  const ids = getIds(book.authors);
   bookAuthorRepo.deleteByBookId(book._id, (result: any, err: any) => {
     if (err) {
       handleError(res, err);
     }
   });
 
-  authorRepo.findAuthorByIds(ids, (authors: Array<IAuthor>, err: any) => {
+  authorRepo.findAuthorsByIds(ids, (authors: Array<IAuthor>, err: any) => {
     authors?.forEach((author) => {
       const bookAuthor = new BookAuthor({
         _id: mongoose.Types.ObjectId(),

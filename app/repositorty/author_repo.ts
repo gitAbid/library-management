@@ -26,7 +26,7 @@ export default class AuthorRepsoitory {
       });
   };
 
-  findAuthorByIds = (
+  findAuthorsByIds = (
     ids: Array<mongoose.Types.ObjectId>,
     callback: Function
   ) => {
@@ -48,6 +48,33 @@ export default class AuthorRepsoitory {
       .save()
       .then((savedAuthor) => {
         callback(savedAuthor, null);
+      })
+      .catch((error) => {
+        console.log(error);
+        callback(null, error);
+      });
+  };
+
+  deleteById = (id: string, callback: Function) => {
+    Author.findByIdAndDelete(id)
+      .exec()
+      .then((author) => {
+        callback(author, null);
+      })
+      .catch((error) => {
+        console.log(error);
+        callback(null, error);
+      });
+  };
+  
+  findByIdAndUpdate = (id: string, author: IAuthor, callback: Function) => {
+    Author.findOneAndUpdate(
+      { _id: id },
+      { $set: author },
+      { new: true, runValidators: true }
+    )
+      .then((updatedAuthor) => {
+        callback(updatedAuthor, null);
       })
       .catch((error) => {
         console.log(error);

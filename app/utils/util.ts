@@ -1,6 +1,7 @@
 import { Response } from "express";
 import monmongoose from "mongoose";
 import IAuthor from "../interfaces/author";
+import IUser from "../interfaces/user";
 
 export const handleSuccess = (
   res: Response<any, Record<string, any>>,
@@ -36,7 +37,10 @@ export const handleError = (
   });
 };
 
-export const forignKeyValidator = (model: monmongoose.Model<IAuthor>, id: string) => {
+export const forignKeyValidator = (
+  model: monmongoose.Model<IAuthor>,
+  id: string
+) => {
   return new Promise((resolve, reject) => {
     model.findOne({ _id: id }, (err: any, result: IAuthor) => {
       if (result) {
@@ -47,6 +51,25 @@ export const forignKeyValidator = (model: monmongoose.Model<IAuthor>, id: string
             `FK Constraint 'checkObjectsExists' for '${id.toString()}' failed`
           )
         );
+    });
+  });
+};
+
+export const usernameValidator = (
+  model: monmongoose.Model<IUser>,
+  username: string
+) => {
+  return new Promise((resolve, reject) => {
+    model.findOne({ username: username }, (err: any, result: IAuthor) => {
+      if (result) {
+        return reject(
+          new Error(
+            `Unique USERNAME Constraint 'checkObjectsExists' for '${username.toString()}' failed`
+          )
+        );
+      } else {
+        return resolve(true);
+      }
     });
   });
 };

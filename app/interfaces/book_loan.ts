@@ -4,6 +4,7 @@ export enum LoanState {
   NEW,
   ACCEPTED,
   REJECTED,
+  RETURNED
 }
 
 export default interface IBookLoan extends Document {

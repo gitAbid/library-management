@@ -27,7 +27,7 @@ export default class BookRepositroy {
       });
   };
 
-  findAuthorByIds = (
+  findBooksByIds = (
     ids: Array<mongoose.Types.ObjectId>,
     callback: Function
   ) => {
@@ -43,6 +43,7 @@ export default class BookRepositroy {
         callback(null, error);
       });
   };
+
   update = (book: IBook, callback: Function) => {
     book
       .save()
@@ -50,20 +51,35 @@ export default class BookRepositroy {
         callback(savedBook, null);
       })
       .catch((error) => {
-        console.log("OnUpdateCall",error);
+        console.log("OnUpdateCall", error);
         callback(null, error);
       });
   };
 
-  deleteById=(id:string,callback:Function)=>{
+  deleteById = (id: string, callback: Function) => {
     Book.findByIdAndDelete(id)
-    .exec()
-    .then((book) => {
-      callback(book, null);
-    })
-    .catch((error) => {
-      console.log(error);
-      callback(null, error);
-    });
-  }
+      .exec()
+      .then((book) => {
+        callback(book, null);
+      })
+      .catch((error) => {
+        console.log(error);
+        callback(null, error);
+      });
+  };
+  
+  findByIdAndUpdate = (id: string, book: IBook, callback: Function) => {
+    Book.findOneAndUpdate(
+      { _id: id },
+      { $set: book },
+      { new: true, runValidators: true }
+    )
+      .then((savedBook) => {
+        callback(savedBook, null);
+      })
+      .catch((error) => {
+        console.log(error);
+        callback(null, error);
+      });
+  };
 }

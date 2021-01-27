@@ -7,7 +7,7 @@ const BookLoanSchema: Schema = new Schema<any>(
     username: { type: String, required: true, index: true },
     loanState: {
       type: String,
-      enum: ["NEW", "ACCEPTED", "REJECTED"],
+      enum: ["NEW", "ACCEPTED", "REJECTED","RETURNED"],
       default: "NEW",
     },
   },
