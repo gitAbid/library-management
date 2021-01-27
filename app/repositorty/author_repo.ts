@@ -1,7 +1,7 @@
 import IAuthor from "../interfaces/author";
 import Author from "../models/author";
 import mongoose from "mongoose";
-export default class AuthorRepsoitory {
+export default class AuthorRepository {
   findById = (id: string, callback: Function) => {
     Author.findById(id)
       .exec()

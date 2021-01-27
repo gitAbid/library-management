@@ -18,7 +18,7 @@ const UserSchema: Schema = new Schema<any>(
     password: { type: String, required: true, index: true },
     role: {
       type: String,
-      enum: ["MEMEBR", "ADMIN"],
+      enum: ["MEMBER", "ADMIN"],
       index: true,
       required: true,
     },

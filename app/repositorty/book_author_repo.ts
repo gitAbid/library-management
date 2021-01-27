@@ -1,7 +1,7 @@
 import BookAuthor from "../models/book_author";
 import IBookAuthor from "../interfaces/book_author";
 
-export default class BookAuthorRepositroy {
+export default class BookAuthorRepository {
   findByBookId = (id: string, callback: Function) => {
     BookAuthor.find({ bookId: id })
       .exec()

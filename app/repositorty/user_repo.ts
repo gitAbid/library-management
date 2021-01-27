@@ -1,7 +1,7 @@
 import IUser from "../interfaces/user";
 import User from "../models/user";
 
-export default class UserRepositroy {
+export default class UserReposition {
   findByUsername = (username: string, callback: Function) => {
     User.findOne({ username: username })
       .exec()

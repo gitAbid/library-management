@@ -1,6 +1,6 @@
 import { Document } from "mongoose";
-export enum LoanState {
-  MEMEBER,
+export enum UserRole {
+  MEMBER,
   ADMIN,
 }
 

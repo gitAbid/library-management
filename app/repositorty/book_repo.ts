@@ -2,7 +2,7 @@ import IBook from "../interfaces/book";
 import Book from "../models/book";
 import mongoose from "mongoose";
 
-export default class BookRepositroy {
+export default class BookRepository {
   findById = (id: string, callback: Function) => {
     Book.findById(id)
       .exec()

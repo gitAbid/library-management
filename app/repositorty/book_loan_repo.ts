@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import IBookLoan, { LoanState } from "../interfaces/book_loan";
 import BookLoan from "../models/book_loan";
 
-export default class BookLoanRepositroy {
+export default class BookLoanRepository {
   findById = (id: string, callback: Function) => {
     BookLoan.findById(id)
       .exec()

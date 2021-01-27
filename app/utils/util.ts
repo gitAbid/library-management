@@ -1,5 +1,5 @@
 import { Response } from "express";
-import monmongoose from "mongoose";
+import mongoose from "mongoose";
 import IAuthor from "../interfaces/author";
 import IUser from "../interfaces/user";
 
@@ -14,6 +14,20 @@ export const handleSuccess = (
     data: data,
   });
 };
+
+export const handleSuccessWithStatus = (
+    res: Response<any, Record<string, any>>,
+    status:number,
+    message: string,
+    data: any
+) => {
+  res.status(status).json({
+    status: "SUCCESS",
+    message: message,
+    data: data,
+  });
+};
+
 
 export const handleFailed = (
   res: Response<any, Record<string, any>>,
@@ -37,8 +51,20 @@ export const handleError = (
   });
 };
 
-export const forignKeyValidator = (
-  model: monmongoose.Model<IAuthor>,
+export const handleResponseMessage = (
+    res: Response<any, Record<string, any>>,
+    status:number,
+    message:string,
+    err: any
+) => {
+  res.status(status).json({
+    message: message,
+    error: err,
+  });
+};
+
+export const foreignKeyValidator = (
+  model: mongoose.Model<IAuthor>,
   id: string
 ) => {
   return new Promise((resolve, reject) => {
@@ -56,7 +82,7 @@ export const forignKeyValidator = (
 };
 
 export const usernameValidator = (
-  model: monmongoose.Model<IUser>,
+  model: mongoose.Model<IUser>,
   username: string
 ) => {
   return new Promise((resolve, reject) => {

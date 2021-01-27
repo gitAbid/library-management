@@ -12,7 +12,7 @@ const MONGO_OPTIONS = {
   retryWrites: false,
 };
 
-const MONGO_URL = process.env.MONGO_URL || `mongodb://localhost:2717/`;
+const MONGO_URL = process.env.MONGO_URL || `mongodb://localhost:27017/`;
 
 const MONGO = {
   options: MONGO_OPTIONS,
@@ -25,9 +25,12 @@ const SERVER = {
   port: SERVER_PORT,
 };
 const SECRET = process.env.TOKEN_SECRET || '7840b29d8046a3f427c1097d77cb939baae4756480fce3e450b74077987c86fab1f29053d2668970ba46b7af4bf469255a17955b95f41480cd8c88787bcd0e20';
+const TOKEN_ISSUER = process.env.TOKEN_SECRET || '7fab1f29053d2668970ba46b7af4bf469255a17955b95f41480cd8c88787bcd0e20';
+
 const tokenConfig = {
   secret: SECRET,
-  expiration: 1000000,
+  issuer: TOKEN_ISSUER,
+  expiration:  1800000,
 };
 
 export const config = {

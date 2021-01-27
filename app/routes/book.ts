@@ -1,29 +1,23 @@
 import express from "express";
-import {
-  addBook,
-  deleteBook,
-  allBooks,
-  getBookById,
-  patchBook,
-  updateBook,
-  getBookAuthors
-} from "../contollers/book_controller";
+import BookController from "../contollers/book_controller";
+import {authenticateRole} from "../middleware/auth";
+import {UserRole} from "../interfaces/user";
 
 const bookRouter = express.Router();
+const bookController = new BookController();
+bookRouter
+    .route("/")
+    .get(authenticateRole([UserRole[UserRole.MEMBER], UserRole[UserRole.ADMIN]]), bookController.allBooks)
+    .post(authenticateRole([UserRole[UserRole.ADMIN]]), bookController.addBook);
 
 bookRouter
-  .route("/")
-  .get(allBooks)
-  .post(addBook);
+    .route("/:id")
+    .get(authenticateRole([UserRole[UserRole.MEMBER],UserRole[UserRole.ADMIN]]),bookController.getBookById)
+    .patch(authenticateRole([UserRole[UserRole.ADMIN]]),bookController.patchBook)
+    .put(authenticateRole([UserRole[UserRole.ADMIN]]),bookController.updateBook)
+    .delete(authenticateRole([UserRole[UserRole.ADMIN]]),bookController.deleteBook);
 
 bookRouter
-  .route("/:id")
-  .get(getBookById)
-  .patch(patchBook)
-  .put(updateBook)
-  .delete(deleteBook);
-
-bookRouter
-  .route("/:bookId/authors")
-  .get(getBookAuthors)
-export { bookRouter };
+    .route("/:bookId/authors")
+    .get(authenticateRole([UserRole[UserRole.MEMBER],UserRole[UserRole.ADMIN]]),bookController.getBookAuthors)
+export {bookRouter};

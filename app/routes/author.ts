@@ -1,23 +1,25 @@
 import express from "express";
 import AuthorController from "../contollers/author_controller";
+import {authenticateRole} from "../middleware/auth";
+import {UserRole} from "../interfaces/user";
 
 const authorRouter = express.Router();
 const authorController=new AuthorController()
 
 authorRouter
    .route("/")
-   .get(authorController.allAuthors)
-   .post(authorController.addAuthor);
+   .get(authenticateRole([UserRole[UserRole.MEMBER],UserRole[UserRole.ADMIN]]), authorController.allAuthors)
+   .post(authenticateRole([UserRole[UserRole.ADMIN]]), authorController.addAuthor);
 
 authorRouter
   .route("/:id")
-  .get(authorController.getAuthorById)
-  .patch(authorController.patchAuthor)
-  .put(authorController.updateAuthor)
-  .delete(authorController.deleteAuthor);
+  .get(authenticateRole([UserRole[UserRole.MEMBER],UserRole[UserRole.ADMIN]]), authorController.getAuthorById)
+  .patch(authenticateRole([UserRole[UserRole.ADMIN]]), authorController.patchAuthor)
+  .put(authenticateRole([UserRole[UserRole.ADMIN]]), authorController.updateAuthor)
+  .delete(authenticateRole([UserRole[UserRole.ADMIN]]), authorController.deleteAuthor);
 
 authorRouter
   .route("/:authorId/books")
-  .get(authorController.getAuthorBooks)
+  .get(authenticateRole([UserRole[UserRole.MEMBER],UserRole[UserRole.ADMIN]]), authorController.getAuthorBooks)
 
 export { authorRouter };

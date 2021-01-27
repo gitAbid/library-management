@@ -1,6 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import IBook from "../interfaces/book";
-import { forignKeyValidator } from "../utils/util";
+import { foreignKeyValidator } from "../utils/util";
 
 const BookSchema: Schema = new Schema<any>(
   {
@@ -14,7 +14,7 @@ const BookSchema: Schema = new Schema<any>(
         required: true,
         validate: {
           validator: (id: string) => {
-            return forignKeyValidator(mongoose.model("Author"), id);
+            return foreignKeyValidator(mongoose.model("Author"), id);
           },
         },
       },
