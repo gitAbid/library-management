@@ -59,15 +59,14 @@ export default class BookLoanController {
         }
     };
     returnBookLoan = (req: Request, res: Response) => {
-        let {bookId} = req.params;
+        let {loanId} = req.params;
 
         let username = res.locals.user.username;
         if (username == null) {
             handleResponseMessage(res, 404, "Unauthorized", "Credentials not valid")
         } else {
-            bookLoanRepo.findNewBookLoanByBookIdAndUsername(
-                bookId,
-                username,
+            bookLoanRepo.findById(
+                loanId,
                 (loan: IBookLoan, err: any) => {
                     if (err) {
                         handleError(res, err);
@@ -96,19 +95,19 @@ export default class BookLoanController {
                                         }
                                     });
                                 } else {
-                                    handleFailed(res, `Book with id ${bookId} no longer availabe`);
+                                    handleFailed(res, `Book with id ${book._id} no longer available`);
                                 }
                             });
                         } else {
                             handleFailed(
                                 res,
-                                "Book loan in not ACCEPTED state. Failed to returned to book"
+                                "Book loan in not ACCEPTED state. Failed to returned the book"
                             );
                         }
                     } else {
                         handleFailed(
                             res,
-                            `No loan found for bookId ${bookId} for username ${username}`
+                            `No loan found for loanId ${loanId} for username ${username}`
                         );
                     }
                 }
@@ -175,8 +174,8 @@ export default class BookLoanController {
             if (err) {
                 handleError(res, err);
             } else if (loan) {
-                loan.loanState = LoanState[LoanState.REJECTED];
                 if (loan.loanState === LoanState[LoanState.NEW]) {
+                    loan.loanState = LoanState[LoanState.REJECTED];
                     bookLoanRepo.update(loan, (loan: IBookLoan, err: any) => {
                         if (err) {
                             handleError(res, err);

@@ -9,7 +9,7 @@ const bookLoanController = new BookLoanController()
 bookLoanRouter.post("/:bookId/request/", authenticateRole([UserRole[UserRole.MEMBER],
     UserRole[UserRole.ADMIN]]), bookLoanController.requestBookLoan);
 
-bookLoanRouter.post("/:bookId/return/", authenticateRole([UserRole[UserRole.ADMIN]]),
+bookLoanRouter.post("/:loanId/return/", authenticateRole([UserRole[UserRole.ADMIN]]),
     bookLoanController.returnBookLoan);
 
 bookLoanRouter.get("/", authenticateRole([UserRole[UserRole.MEMBER], UserRole[UserRole.ADMIN]]),

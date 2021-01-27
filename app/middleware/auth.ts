@@ -2,7 +2,7 @@ import {Request, Response} from "express";
 import jwt from "jsonwebtoken";
 import {config} from "../config/config";
 import {handleResponseMessage} from "../utils/util";
-import IUser, {UserRole} from "../interfaces/user";
+import IUser from "../interfaces/user";
 
 
 export const authenticate = (req: Request, res: Response, next: any) => {
@@ -26,9 +26,9 @@ export const authenticate = (req: Request, res: Response, next: any) => {
 export const generateJWT = (user: IUser, callback: Function) => {
     const expiration = Date.now() + config.tokenConfig.expiration
 
-    const token = jwt.sign(
+    jwt.sign(
         {
-            username: user.name,
+            username: user.username,
             role: user.role,
         },
         config.tokenConfig.secret,
