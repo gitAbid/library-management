@@ -11,8 +11,8 @@ management features. It also provide JWT and Role based authentication for apis.
 
 ### Build & Run
 
-1. goto project root directory and run `npm install` to download all dependency
-1. create an `.env` file in root directory and setup these environment variables
+1. Goto project root directory and run `npm install` to download all dependency
+1. Create `.env` file in root directory and setup these environment variables
 
     ```
     MONGO_URL #mongodb connection url
@@ -20,7 +20,7 @@ management features. It also provide JWT and Role based authentication for apis.
     TOKEN_SECRET #Token secret key used to generate jwt token
     TOKEN_SECRET_ISSUER #Token issuer key used to generate jwt token
     ```
-1. run `npm start` command to start the application
+1. Run `npm start` command to start the application
 
 ### API Specifications
 
@@ -35,9 +35,9 @@ There're 2 types of api endpoint in this application in perspective of security.
 
 #### USERS
 
-* baseurl :`http://localhost:<SERVER_PORT>/users`
+* BaseUrl :`http://localhost:<SERVER_PORT>/users`
 
-    * `/` [GET] [Authorized] [ADMIN] : gets all current user details and call only accessed by **ADMIN** user
+    * `/` [GET] [Authorized] [ADMIN] : gets all users details
 
     * `/register` [POST] [Unauthorized] : register new user
       ```
@@ -67,7 +67,7 @@ There're 2 types of api endpoint in this application in perspective of security.
 
 #### BOOKS
 
-* baseurl :`http://localhost:<SERVER_PORT>/books`
+* BaseUrl :`http://localhost:<SERVER_PORT>/books`
 
     * `/` [GET] [Authorized] [ADMIN,MEMBER] : gets all books
     * `/` [POST] [Authorized] [ADMIN] : add book
@@ -109,7 +109,7 @@ There're 2 types of api endpoint in this application in perspective of security.
 
 #### AUTHORS
 
-* baseurl :`http://localhost:<SERVER_PORT>/authors`
+* BaseUrl :`http://localhost:<SERVER_PORT>/authors`
 
     * `/` [GET] [Authorized] [ADMIN,MEMBER] : gets all authors
     * `/` [POST] [Authorized] [ADMIN] : add author
@@ -149,7 +149,7 @@ There're 2 types of api endpoint in this application in perspective of security.
 
 #### BOOK-LOAN
 
-* baseurl :`http://localhost:<SERVER_PORT>/book-loans`
+* BaseUrl :`http://localhost:<SERVER_PORT>/book-loans`
     * `/` [GET] [Authorized] [ADMIN,MEMBER] : see all loan applications
     * `/export` [GET] [Authorized] [ADMIN] : download all loan applications to csv 
     * `/:bookId/request` [POST] [Authorized] [ADMIN,MEMBER] : request for book loan by bookId
