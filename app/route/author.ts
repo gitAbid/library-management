@@ -1,5 +1,5 @@
 import express from "express";
-import AuthorController from "../contoller/author_controller";
+import AuthorController from "../controller/author_controller";
 import {authenticateRole} from "../middleware/auth";
 import {UserRole} from "../interface/user";
 

@@ -1,5 +1,5 @@
 import express from "express";
-import BookLoanController from "../contoller/book_loan_controller";
+import BookLoanController from "../controller/book_loan_controller";
 import {authenticateRole} from "../middleware/auth";
 import {UserRole} from "../interface/user";
 

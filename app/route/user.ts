@@ -1,5 +1,5 @@
 import express from "express";
-import UserController from "../contoller/user_controller";
+import UserController from "../controller/user_controller";
 import {authenticateRole, authenticateToken} from "../middleware/auth";
 import {UserRole} from "../interface/user";
 import {upload} from "../middleware/upload";
