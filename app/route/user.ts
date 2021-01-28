@@ -1,16 +1,25 @@
 import express from "express";
 import UserController from "../contoller/user_controller";
-import {authenticate, authenticateRole} from "../middleware/auth";
+import {authenticateRole, authenticateToken} from "../middleware/auth";
 import {UserRole} from "../interface/user";
+import {upload} from "../middleware/upload";
 
 const userRouter = express.Router();
 const userController = new UserController();
+
+
+userRouter.post("/", authenticateToken, authenticateRole([UserRole[UserRole.ADMIN]]),
+    userController.getAllUsers);
 
 userRouter.post("/authenticate", userController.authenticate);
 
 userRouter.post("/register", userController.register);
 
-userRouter.post("/:userId/profile/upload", authenticate, authenticateRole([UserRole[UserRole.MEMBER],
-    UserRole[UserRole.ADMIN]]), userController.uploadProfilePicture);
+userRouter.post("/profile", authenticateToken, authenticateRole([UserRole[UserRole.MEMBER],
+    UserRole[UserRole.ADMIN]]), userController.getUserProfileDetails);
+
+userRouter.post("/profile/upload", upload.single('file'),
+    authenticateToken, authenticateRole([UserRole[UserRole.MEMBER], UserRole[UserRole.ADMIN]]),
+    userController.uploadProfilePicture);
 
 export {userRouter};

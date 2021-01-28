@@ -63,7 +63,7 @@ export default class BookController {
     addBook = (req: Request, res: Response) => {
         const book = new Book(req.body);
 
-        bookRepo.update(book, (updatedBook: IBook, err: any) => {
+        bookRepo.save(book, (updatedBook: IBook, err: any) => {
             if (err) {
                 handleError(res, err);
             } else {
@@ -82,7 +82,7 @@ export default class BookController {
                 handleError(res, err);
             } else if (book) {
                 updateBookInfo(book, reqBook);
-                bookRepo.update(book, (updateBook: IBook, err: any) => {
+                bookRepo.save(book, (updateBook: IBook, err: any) => {
                     if (err) {
                         handleError(res, err);
                     } else {
@@ -162,7 +162,7 @@ const updateAuthorBookRelation = (
                 bookId: book._id,
             });
 
-            bookAuthorRepo.update(bookAuthor, (result: IBookAuthor, err: any) => {
+            bookAuthorRepo.save(bookAuthor, (result: IBookAuthor, err: any) => {
                 if (err) {
                     handleError(res, err);
                 }

@@ -5,7 +5,7 @@ import IBookLoan, {LoanState} from "../interface/book_loan";
 import BookLoan from "../model/book_loan";
 import BookLoanRepository from "../repository/book_loan_repo";
 import BookRepository from "../repository/book_repo";
-import {handleError, handleFailed, handleResponseMessage, handleSuccess} from "../util/utils";
+import {getUsername, handleError, handleFailed, handleSuccess} from "../util/utils";
 import ObjectsToCsv from "objects-to-csv";
 import fs from "fs"
 
@@ -17,107 +17,100 @@ const CSV_FILE_TEMP_LOCATION = "./app/temp"
 export default class BookLoanController {
     requestBookLoan = (req: Request, res: Response) => {
         let {bookId} = req.params;
-
-        let username = res.locals.user.username;
-        if (username == null) {
-            handleResponseMessage(res, 404, "Unauthorized", "Credentials not valid")
-        } else {
-            bookLoanRepo.findNewBookLoanByBookIdAndUsername(
-                bookId,
-                username,
-                (loan: IBookLoan, err: any) => {
-                    if (err) {
-                        handleError(res, err);
-                    } else if (loan) {
-                        console.log(loan);
-                        handleFailed(res, `Already pending request exists for book`);
-                    } else {
-                        bookRep.findById(bookId, (book: IBook, err: any) => {
-                            if (err) {
-                                handleError(res, err);
-                            } else if (book) {
-                                if (!isBookAvailableForLoan(book)) {
-                                    handleFailed(res, "No more book is available for loan");
-                                } else {
-                                    const bookLoan = new BookLoan({
-                                        _id: new mongoose.Types.ObjectId(),
-                                        bookId: book.id,
-                                        username: username,
-                                    });
-
-                                    bookLoanRepo.update(bookLoan, (loan: IBookLoan, err: any) => {
-                                        if (err) {
-                                            handleError(res, err);
-                                        } else {
-                                            handleSuccess(res, "Book loan request successful", loan);
-                                        }
-                                    });
-                                }
+        const username = getUsername(res)
+        bookLoanRepo.findNewBookLoanByBookIdAndUsername(
+            bookId,
+            username,
+            (loan: IBookLoan, err: any) => {
+                if (err) {
+                    handleError(res, err);
+                } else if (loan) {
+                    console.log(loan);
+                    handleFailed(res, `Already pending request exists for book`);
+                } else {
+                    bookRep.findById(bookId, (book: IBook, err: any) => {
+                        if (err) {
+                            handleError(res, err);
+                        } else if (book) {
+                            if (!isBookAvailableForLoan(book)) {
+                                handleFailed(res, "No more book is available for loan");
                             } else {
-                                handleFailed(res, `No book found with id ${bookId}`);
+                                const bookLoan = new BookLoan({
+                                    _id: new mongoose.Types.ObjectId(),
+                                    bookId: book.id,
+                                    username: username,
+                                });
+
+                                bookLoanRepo.save(bookLoan, (loan: IBookLoan, err: any) => {
+                                    if (err) {
+                                        handleError(res, err);
+                                    } else {
+                                        handleSuccess(res, "Book loan request successful", loan);
+                                    }
+                                });
                             }
-                        });
-                    }
+                        } else {
+                            handleFailed(res, `No book found with id ${bookId}`);
+                        }
+                    });
                 }
-            );
-        }
+            }
+        );
+
     };
 
     returnBookLoan = (req: Request, res: Response) => {
         let {loanId} = req.params;
 
-        let username = res.locals.user.username;
-        if (username == null) {
-            handleResponseMessage(res, 404, "Unauthorized", "Credentials not valid")
-        } else {
-            bookLoanRepo.findById(
-                loanId,
-                (loan: IBookLoan, err: any) => {
-                    if (err) {
-                        handleError(res, err);
-                    } else if (loan) {
-                        if (loan.loanState === LoanState[LoanState.ACCEPTED]) {
-                            bookRep.findById(loan.bookId, (book: IBook, err: any) => {
-                                if (err) {
-                                    handleError(res, err);
-                                } else if (book) {
-                                    book.loanCount = book.loanCount - 1;
-                                    bookRep.update(book, (updatedBook: IBook, err: any) => {
-                                        if (err) {
-                                            handleError(res, err);
-                                        } else {
-                                            loan.loanState = LoanState[LoanState.RETURNED];
-                                            bookLoanRepo.update(
-                                                loan,
-                                                (updateLoan: IBookLoan, err: any) => {
-                                                    if (err) {
-                                                        handleError(res, err);
-                                                    } else {
-                                                        handleSuccess(res, "Book return successful", loan);
-                                                    }
+        const username = getUsername(res)
+
+        bookLoanRepo.findById(
+            loanId,
+            (loan: IBookLoan, err: any) => {
+                if (err) {
+                    handleError(res, err);
+                } else if (loan) {
+                    if (loan.loanState === LoanState[LoanState.ACCEPTED]) {
+                        bookRep.findById(loan.bookId, (book: IBook, err: any) => {
+                            if (err) {
+                                handleError(res, err);
+                            } else if (book) {
+                                book.loanCount = book.loanCount - 1;
+                                bookRep.save(book, (updatedBook: IBook, err: any) => {
+                                    if (err) {
+                                        handleError(res, err);
+                                    } else {
+                                        loan.loanState = LoanState[LoanState.RETURNED];
+                                        bookLoanRepo.save(
+                                            loan,
+                                            (updateLoan: IBookLoan, err: any) => {
+                                                if (err) {
+                                                    handleError(res, err);
+                                                } else {
+                                                    handleSuccess(res, "Book return successful", loan);
                                                 }
-                                            );
-                                        }
-                                    });
-                                } else {
-                                    handleFailed(res, `Book with id ${book._id} no longer available`);
-                                }
-                            });
-                        } else {
-                            handleFailed(
-                                res,
-                                "Book loan in not ACCEPTED state. Failed to returned the book"
-                            );
-                        }
+                                            }
+                                        );
+                                    }
+                                });
+                            } else {
+                                handleFailed(res, `Book with id ${book._id} no longer available`);
+                            }
+                        });
                     } else {
                         handleFailed(
                             res,
-                            `No loan found for loanId ${loanId} for username ${username}`
+                            "Book loan in not ACCEPTED state. Failed to returned the book"
                         );
                     }
+                } else {
+                    handleFailed(
+                        res,
+                        `No loan found for loanId ${loanId} for username ${username}`
+                    );
                 }
-            );
-        }
+            }
+        );
     };
 
     getAllBookLoanRequests = (req: Request, res: Response) => {
@@ -145,10 +138,10 @@ export default class BookLoanController {
 
                         if (book && isBookAvailableForLoan(book)) {
                             book.loanCount = book.loanCount + 1;
-                            bookRep.update(book, (book: IBook, err: any) => {
+                            bookRep.save(book, (book: IBook, err: any) => {
                                 loan.loanState = LoanState[LoanState.ACCEPTED];
 
-                                bookLoanRepo.update(loan, (loan: IBookLoan, err: any) => {
+                                bookLoanRepo.save(loan, (loan: IBookLoan, err: any) => {
                                     if (err) {
                                         handleError(res, err);
                                     } else {
@@ -181,7 +174,7 @@ export default class BookLoanController {
             } else if (loan) {
                 if (loan.loanState === LoanState[LoanState.NEW]) {
                     loan.loanState = LoanState[LoanState.REJECTED];
-                    bookLoanRepo.update(loan, (loan: IBookLoan, err: any) => {
+                    bookLoanRepo.save(loan, (loan: IBookLoan, err: any) => {
                         if (err) {
                             handleError(res, err);
                         } else {

@@ -5,7 +5,7 @@ import {handleResponseMessage} from "../util/utils";
 import IUser from "../interface/user";
 
 
-export const authenticate = (req: Request, res: Response, next: any) => {
+export const authenticateToken = (req: Request, res: Response, next: any) => {
     const authHeader = req.headers["authorization"];
     const token = authHeader && authHeader.split(" ")[1];
     if (token) {

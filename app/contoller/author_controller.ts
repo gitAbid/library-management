@@ -26,7 +26,7 @@ export default class AuthorController {
 
     addAuthor = (req: Request, res: Response) => {
         const author = new Author(req.body);
-        authorRepo.update(author, (updatedAuthor: IAuthor, err: any) => {
+        authorRepo.save(author, (updatedAuthor: IAuthor, err: any) => {
             if (err) {
                 handleError(res, err);
             } else {
@@ -55,7 +55,7 @@ export default class AuthorController {
                 handleError(res, err);
             } else if (author) {
                 updateAuthorInfo(author, reqAuthor);
-                authorRepo.update(author, (updatedAuthor: IAuthor, err: any) => {
+                authorRepo.save(author, (updatedAuthor: IAuthor, err: any) => {
                     if (err) {
                         handleError(res, err);
                     } else {
