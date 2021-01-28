@@ -72,28 +72,44 @@ export default class AuthorController {
 
     deleteAuthor = (req: Request, res: Response) => {
         let {authorId} = req.params;
-        authorRepo.deleteById(authorId, (result: any, err: any) => {
+        authorRepo.findById(authorId, (author: IAuthor, err: any) => {
             if (err) {
                 handleError(res, err);
+            } else if (author) {
+                authorRepo.deleteById(authorId, (result: any, err: any) => {
+                    if (err) {
+                        handleError(res, err);
+                    } else {
+                        handleSuccess(res, `Author deleted with id ${authorId}`, {})
+                    }
+                });
             } else {
-                handleSuccess(res, `Author deleted with id ${authorId}`, {})
+                handleFailed(res, `No author found with id ${authorId}`)
             }
-        });
+        })
     };
 
     patchAuthor = (req: Request, res: Response) => {
         let {authorId} = req.params;
         const author = new Author(req.body);
         author._id = authorId;
-        authorRepo.findByIdAndUpdate(authorId, author, (updateAuthor: IBook, err: any) => {
+        authorRepo.findById(authorId, (author: IAuthor, err: any) => {
             if (err) {
                 handleError(res, err);
             } else if (author) {
-                handleSuccess(res, "Author updated successfully", updateAuthor)
+                authorRepo.findByIdAndUpdate(authorId, author, (updateAuthor: IBook, err: any) => {
+                    if (err) {
+                        handleError(res, err);
+                    } else if (author) {
+                        handleSuccess(res, "Author updated successfully", updateAuthor)
+                    } else {
+                        handleFailed(res, `No book found with id ${authorId}`)
+                    }
+                });
             } else {
-                handleFailed(res, `No book found with id ${authorId}`)
+                handleFailed(res, `No author found with id ${authorId}`)
             }
-        });
+        })
     };
 
     getAuthorBooks = (req: Request, res: Response) => {

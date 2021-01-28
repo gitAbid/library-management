@@ -106,29 +106,45 @@ export default class BookController {
     deleteBook = (req: Request, res: Response) => {
         let {bookId} = req.params;
 
-        bookRepo.deleteById(bookId, (result: any, err: any) => {
+        bookRepo.findById(bookId, (book: IBook, err: any) => {
             if (err) {
                 handleError(res, err);
+            } else if (book) {
+                bookRepo.deleteById(bookId, (result: any, err: any) => {
+                    if (err) {
+                        handleError(res, err);
+                    } else {
+                        handleSuccess(res, `Book deleted with id ${bookId}`, {})
+                    }
+                });
             } else {
-                handleSuccess(res, `Book deleted with id ${bookId}`, {})
+                handleFailed(res, `No book found with id ${bookId}`)
             }
-        });
+        })
     };
 
     patchBook = (req: Request, res: Response) => {
         let {bookId} = req.params;
         const book = new Book(req.body);
         book._id = bookId;
-        bookRepo.findByIdAndUpdate(bookId, book, (updateBook: IBook, err: any) => {
+        bookRepo.findById(bookId, (book: IBook, err: any) => {
             if (err) {
                 handleError(res, err);
             } else if (book) {
-                updateAuthorBookRelation(book, res);
-                handleSuccess(res, "Book update successful", updateBook)
+                bookRepo.findByIdAndUpdate(bookId, book, (updateBook: IBook, err: any) => {
+                    if (err) {
+                        handleError(res, err);
+                    } else if (book) {
+                        updateAuthorBookRelation(book, res);
+                        handleSuccess(res, "Book update successful", updateBook)
+                    } else {
+                        handleFailed(res, `No book found with id ${bookId}`)
+                    }
+                });
             } else {
                 handleFailed(res, `No book found with id ${bookId}`)
             }
-        });
+        })
     };
 }
 const updateBookInfo = (book: IBook, reqBook: IBook) => {
