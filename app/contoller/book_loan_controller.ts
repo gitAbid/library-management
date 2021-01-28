@@ -1,11 +1,11 @@
 import {Request, Response} from "express";
 import mongoose from "mongoose";
-import IBook from "../interfaces/book";
-import IBookLoan, {LoanState} from "../interfaces/book_loan";
-import BookLoan from "../models/book_loan";
-import BookLoanRepository from "../repositorty/book_loan_repo";
-import BookRepository from "../repositorty/book_repo";
-import {handleError, handleFailed, handleResponseMessage, handleSuccess} from "../utils/util";
+import IBook from "../interface/book";
+import IBookLoan, {LoanState} from "../interface/book_loan";
+import BookLoan from "../model/book_loan";
+import BookLoanRepository from "../repository/book_loan_repo";
+import BookRepository from "../repository/book_repo";
+import {handleError, handleFailed, handleResponseMessage, handleSuccess} from "../util/utils";
 import ObjectsToCsv from "objects-to-csv";
 import fs from "fs"
 

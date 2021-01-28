@@ -1,8 +1,8 @@
 import {Request, Response} from "express";
-import IUser from "../interfaces/user";
-import User from "../models/user";
-import UserRepository from "../repositorty/user_repo";
-import {handleError, handleFailed, handleSuccess} from "../utils/util";
+import IUser from "../interface/user";
+import User from "../model/user";
+import UserRepository from "../repository/user_repo";
+import {handleError, handleFailed, handleSuccess} from "../util/utils";
 import {generateJWT} from "../middleware/auth";
 
 const userRepository = new UserRepository();

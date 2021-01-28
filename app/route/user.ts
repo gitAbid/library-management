@@ -1,7 +1,7 @@
 import express from "express";
-import UserController from "../contollers/user_controller";
+import UserController from "../contoller/user_controller";
 import {authenticate, authenticateRole} from "../middleware/auth";
-import {UserRole} from "../interfaces/user";
+import {UserRole} from "../interface/user";
 
 const userRouter = express.Router();
 const userController = new UserController();

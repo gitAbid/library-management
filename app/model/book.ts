@@ -1,6 +1,6 @@
 import mongoose, { Schema } from "mongoose";
-import IBook from "../interfaces/book";
-import { foreignKeyValidator } from "../utils/util";
+import IBook from "../interface/book";
+import { foreignKeyValidator } from "../util/utils";
 
 const BookSchema: Schema = new Schema<any>(
   {

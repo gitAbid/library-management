@@ -1,12 +1,13 @@
-import IAuthor from "../interfaces/author";
-import Author from "../models/author";
+import IBook from "../interface/book";
+import Book from "../model/book";
 import mongoose from "mongoose";
-export default class AuthorRepository {
+
+export default class BookRepository {
   findById = (id: string, callback: Function) => {
-    Author.findById(id)
+    Book.findById(id)
       .exec()
-      .then((author) => {
-        callback(author, null);
+      .then((book) => {
+        callback(book, null);
       })
       .catch((error) => {
         console.log(error);
@@ -15,10 +16,10 @@ export default class AuthorRepository {
   };
 
   findAllBook = (callback: Function) => {
-    Author.find()
+    Book.find()
       .exec()
-      .then((authors) => {
-        callback(authors, null);
+      .then((books) => {
+        callback(books, null);
       })
       .catch((error) => {
         console.log(error);
@@ -26,16 +27,16 @@ export default class AuthorRepository {
       });
   };
 
-  findAuthorsByIds = (
+  findBooksByIds = (
     ids: Array<mongoose.Types.ObjectId>,
     callback: Function
   ) => {
-    Author.find({
+    Book.find({
       _id: { $in: ids },
     })
       .exec()
-      .then((authors) => {
-        callback(authors, null);
+      .then((books) => {
+        callback(books, null);
       })
       .catch((error) => {
         console.log(error);
@@ -43,23 +44,23 @@ export default class AuthorRepository {
       });
   };
 
-  update = (author: IAuthor, callback: Function) => {
-    author
+  update = (book: IBook, callback: Function) => {
+    book
       .save()
-      .then((savedAuthor) => {
-        callback(savedAuthor, null);
+      .then((savedBook) => {
+        callback(savedBook, null);
       })
       .catch((error) => {
-        console.log(error);
+        console.log("OnUpdateCall", error);
         callback(null, error);
       });
   };
 
   deleteById = (id: string, callback: Function) => {
-    Author.findByIdAndDelete(id)
+    Book.findByIdAndDelete(id)
       .exec()
-      .then((author) => {
-        callback(author, null);
+      .then((book) => {
+        callback(book, null);
       })
       .catch((error) => {
         console.log(error);
@@ -67,14 +68,14 @@ export default class AuthorRepository {
       });
   };
   
-  findByIdAndUpdate = (id: string, author: IAuthor, callback: Function) => {
-    Author.findOneAndUpdate(
+  findByIdAndUpdate = (id: string, book: IBook, callback: Function) => {
+    Book.findOneAndUpdate(
       { _id: id },
-      { $set: author },
+      { $set: book },
       { new: true, runValidators: true }
     )
-      .then((updatedAuthor) => {
-        callback(updatedAuthor, null);
+      .then((savedBook) => {
+        callback(savedBook, null);
       })
       .catch((error) => {
         console.log(error);

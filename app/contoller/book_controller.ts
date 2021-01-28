@@ -1,14 +1,14 @@
 import {Request, Response} from "express";
 import mongoose from "mongoose";
-import IBook from "../interfaces/book";
-import Book from "../models/book";
-import BookRepository from "../repositorty/book_repo";
-import AuthorRepository from "../repositorty/author_repo";
-import {handleError, handleFailed, handleSuccess, handleSuccessWithStatus} from "../utils/util";
-import IAuthor from "../interfaces/author";
-import BookAuthor from "../models/book_author";
-import BookAuthorRepository from "../repositorty/book_author_repo";
-import IBookAuthor from "../interfaces/book_author";
+import IBook from "../interface/book";
+import Book from "../model/book";
+import BookRepository from "../repository/book_repo";
+import AuthorRepository from "../repository/author_repo";
+import {handleError, handleFailed, handleSuccess, handleSuccessWithStatus} from "../util/utils";
+import IAuthor from "../interface/author";
+import BookAuthor from "../model/book_author";
+import BookAuthorRepository from "../repository/book_author_repo";
+import IBookAuthor from "../interface/book_author";
 
 const bookRepo = new BookRepository();
 const authorRepo = new AuthorRepository();

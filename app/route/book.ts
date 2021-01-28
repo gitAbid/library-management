@@ -1,7 +1,7 @@
 import express from "express";
-import BookController from "../contollers/book_controller";
+import BookController from "../contoller/book_controller";
 import {authenticateRole} from "../middleware/auth";
-import {UserRole} from "../interfaces/user";
+import {UserRole} from "../interface/user";
 
 const bookRouter = express.Router();
 const bookController = new BookController();

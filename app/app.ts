@@ -1,9 +1,9 @@
 import express, { Request, Response } from "express";
-import { bookRouter } from "./routes/book";
+import { bookRouter } from "./route/book";
 import { config } from "./config/config";
-import { authorRouter } from "./routes/author";
-import { bookLoanRouter } from "./routes/book_loan";
-import { userRouter } from "./routes/user";
+import { authorRouter } from "./route/author";
+import { bookLoanRouter } from "./route/book_loan";
+import { userRouter } from "./route/user";
 import mongoose from "mongoose";
 import { authenticate } from "./middleware/auth";
 

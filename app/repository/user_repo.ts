@@ -1,5 +1,5 @@
-import IUser from "../interfaces/user";
-import User from "../models/user";
+import IUser from "../interface/user";
+import User from "../model/user";
 
 export default class UserReposition {
   findByUsername = (username: string, callback: Function) => {

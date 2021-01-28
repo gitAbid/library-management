@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
-import IBookLoan, { LoanState } from "../interfaces/book_loan";
-import BookLoan from "../models/book_loan";
+import IBookLoan, { LoanState } from "../interface/book_loan";
+import BookLoan from "../model/book_loan";
 
 export default class BookLoanRepository {
   findById = (id: string, callback: Function) => {

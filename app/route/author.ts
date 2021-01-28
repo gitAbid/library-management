@@ -1,7 +1,7 @@
 import express from "express";
-import AuthorController from "../contollers/author_controller";
+import AuthorController from "../contoller/author_controller";
 import {authenticateRole} from "../middleware/auth";
-import {UserRole} from "../interfaces/user";
+import {UserRole} from "../interface/user";
 
 const authorRouter = express.Router();
 const authorController=new AuthorController()

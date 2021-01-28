@@ -1,8 +1,8 @@
 import {Request, Response} from "express";
 import jwt from "jsonwebtoken";
 import {config} from "../config/config";
-import {handleResponseMessage} from "../utils/util";
-import IUser from "../interfaces/user";
+import {handleResponseMessage} from "../util/utils";
+import IUser from "../interface/user";
 
 
 export const authenticate = (req: Request, res: Response, next: any) => {

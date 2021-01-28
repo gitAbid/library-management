@@ -1,7 +1,7 @@
 import { Response } from "express";
 import mongoose from "mongoose";
-import IAuthor from "../interfaces/author";
-import IUser from "../interfaces/user";
+import IAuthor from "../interface/author";
+import IUser from "../interface/user";
 
 export const handleSuccess = (
   res: Response<any, Record<string, any>>,

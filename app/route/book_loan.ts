@@ -1,7 +1,7 @@
 import express from "express";
-import BookLoanController from "../contollers/book_loan_controller";
+import BookLoanController from "../contoller/book_loan_controller";
 import {authenticateRole} from "../middleware/auth";
-import {UserRole} from "../interfaces/user";
+import {UserRole} from "../interface/user";
 
 const bookLoanRouter = express.Router();
 const bookLoanController = new BookLoanController()

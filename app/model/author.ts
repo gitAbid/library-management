@@ -1,6 +1,6 @@
 import mongoose, { Schema } from "mongoose";
-import IAuthor from "../interfaces/author";
-import IBook from "../interfaces/book";
+import IAuthor from "../interface/author";
+import IBook from "../interface/book";
 
 const AuthorSchema: Schema = new Schema<any>(
   {

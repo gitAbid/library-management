@@ -1,6 +1,6 @@
 import mongoose, { Schema } from "mongoose";
-import IUser from "../interfaces/user";
-import { usernameValidator } from "../utils/util";
+import IUser from "../interface/user";
+import { usernameValidator } from "../util/utils";
 
 const UserSchema: Schema = new Schema<any>(
   {
