@@ -15,10 +15,10 @@ management features. It also provide JWT and Role based authentication for apis.
 1. Create `.env` file in root directory and setup these environment variables
 
     ```
-    MONGO_URL #mongodb connection url
-    SERVER_PORT #application running port
-    TOKEN_SECRET #Token secret key used to generate jwt token
-    TOKEN_SECRET_ISSUER #Token issuer key used to generate jwt token
+    MONGO_URL =  #set mongodb connection url
+    SERVER_PORT =  #set application running port
+    TOKEN_SECRET =  #set token secret key used to generate jwt token
+    TOKEN_SECRET_ISSUER = #set token issuer key used to generate jwt token
     ```
 1. Run `npm start` command to start the application
 
