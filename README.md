@@ -9,10 +9,7 @@ management features. It also provide JWT and Role based authentication for apis.
 * npm: 6.14.8
 * mongoDB: latest
 
-### Build & Run
-
-1. Goto project root directory and run `npm install` to download all dependency
-1. Create `.env` file in root directory and setup these environment variables
+* Create `.env` file in root directory and setup these environment variables
 
     ```
     MONGO_URL =  #set mongodb connection url
@@ -20,7 +17,12 @@ management features. It also provide JWT and Role based authentication for apis.
     TOKEN_SECRET =  #set token secret key used to generate jwt token
     TOKEN_SECRET_ISSUER = #set token issuer key used to generate jwt token
     ```
-1. Run `npm start` command to start the application
+
+### Build & Run
+
+* Goto project root directory and run `npm install` to download all dependency
+
+* Run `npm start` command to start the application
 
 ### API Specifications
 
@@ -28,10 +30,10 @@ There're 2 types of api endpoint in this application in perspective of security.
 
 * **Authorized** : for this kind of api there will be role assigned beside api end point and need authorization header
 
-  ```
+  ```http request
   Authorization: Bearer <TOKEN> #generate token for user using  [http://localhost:<SERVER_PORT>/users/authenticate] endpoint
   ```
-* **Unauthorized** : everyone can access this 
+* **Unauthorized** : everyone can access this
 
 #### USERS
 
@@ -40,7 +42,7 @@ There're 2 types of api endpoint in this application in perspective of security.
     * `/` [GET] [Authorized] [ADMIN] : gets all users details
 
     * `/register` [POST] [Unauthorized] : register new user
-      ```
+      ```javascript
       #Sample Requesr
       {
          "name":"Admin",
@@ -50,7 +52,7 @@ There're 2 types of api endpoint in this application in perspective of security.
       }
       ```
     * `/authenticate`[POST] [Unauthorized] : authenticate and get token for accessing other protected endpoint
-      ```
+      ```json
       #Sample request
       {
         "username":"admin",
@@ -60,7 +62,7 @@ There're 2 types of api endpoint in this application in perspective of security.
     * `/profile` [GET] [Authorized] [ADMIN,MEMBER]: get profile details of user based on token
 
     * `/profile/upload` [POST] [Authorized] [ADMIN,MEMBER] : upload profile pictures for user based on token
-      ```
+      ```json
         #Required Header
         file: <FILE_TO_BE_UPLOADED> 
       ```
@@ -71,7 +73,7 @@ There're 2 types of api endpoint in this application in perspective of security.
 
     * `/` [GET] [Authorized] [ADMIN,MEMBER] : gets all books
     * `/` [POST] [Authorized] [ADMIN] : add book
-      ```
+      ```json
        #Sample request
        {
         "authors": [], #Optional array of author Ids
@@ -85,8 +87,9 @@ There're 2 types of api endpoint in this application in perspective of security.
       ```
     * `/:bookId`[GET] [Authorized] [ADMIN,MEMBER]: get book details by bookId
     * `/:bookId`[DELETE] [Authorized] [ADMIN] : delete book by bookId
-    * `/:bookId`[PUT] [Authorized] [ADMIN] : update book info by bookId and all mandatory field required [Can't update loanCount through PUT]
-      ```
+    * `/:bookId`[PUT] [Authorized] [ADMIN] : update book info by bookId and all mandatory field
+      required [Can't update loanCount through PUT]
+      ```json
       #Sample Request
       {
         "title": "Harry Poter 9",
@@ -97,9 +100,9 @@ There're 2 types of api endpoint in this application in perspective of security.
         "category": "Fantasy Fiction, Drama, Young adult fiction, Mystery, Thriller, Bildungsroman",
         "inventoryCount": 2, 
       }
-      
-    * `/:bookId`[PATCH] [Authorized] [ADMIN] : update book property by bookId 
-      ```
+
+    * `/:bookId`[PATCH] [Authorized] [ADMIN] : update book property by bookId
+      ```json
       #Sample Request
       {
          "inventoryCount": 3,
@@ -113,7 +116,7 @@ There're 2 types of api endpoint in this application in perspective of security.
 
     * `/` [GET] [Authorized] [ADMIN,MEMBER] : gets all authors
     * `/` [POST] [Authorized] [ADMIN] : add author
-      ```
+      ```json
        #Sample request
        {
         "name": "J. K. Rowling 3",
@@ -126,8 +129,8 @@ There're 2 types of api endpoint in this application in perspective of security.
     * `/:authorId`[GET] [Authorized] [ADMIN,MEMBER]: get author details by authorId
     * `/:authorId`[DELETE] [Authorized] [ADMIN] : delete author by authorId
     * `/:authorId`[PUT] [Authorized] [ADMIN] : update author info by authorId and all mandatory field required
-      
-      ```
+
+      ```json
       #Sample Request
       {
         "name": "J. K. Rowling",
@@ -137,9 +140,9 @@ There're 2 types of api endpoint in this application in perspective of security.
         "birthday": "1965-08-31"
       }
       ```
-      
+
     * `/:authorId`[PATCH] [Authorized] [ADMIN] : update author property by authorId
-      ```
+      ```json
       #Sample Request
       {
         "bio": "Joanne Rowling CH, OBE, HonFRSE, FRCPE, FRSL, better known by her pen name J. K. Rowling, is a British author and philanthropist. She is best known for writing the Harry Potter fantasy series, which has won multiple awards and sold more than 500 million copies, becoming the best-selling book series in history",
@@ -151,7 +154,7 @@ There're 2 types of api endpoint in this application in perspective of security.
 
 * BaseUrl :`http://localhost:<SERVER_PORT>/book-loans`
     * `/` [GET] [Authorized] [ADMIN,MEMBER] : see all loan applications
-    * `/export` [GET] [Authorized] [ADMIN] : download all loan applications to csv 
+    * `/export` [GET] [Authorized] [ADMIN] : download all loan applications to csv
     * `/:bookId/request` [POST] [Authorized] [ADMIN,MEMBER] : request for book loan by bookId
     * `/:loanId/accept` [POST] [Authorized] [ADMIN] : accept book loan by loanId
     * `/:bookId/reject` [POST] [Authorized] [ADMIN] : reject book loan by loanId
