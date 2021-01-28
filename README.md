@@ -157,5 +157,5 @@ There're 2 types of api endpoint in this application in perspective of security.
     * `/export` [GET] [Authorized] [ADMIN] : download all loan applications to csv
     * `/:bookId/request` [POST] [Authorized] [ADMIN,MEMBER] : request for book loan by bookId
     * `/:loanId/accept` [POST] [Authorized] [ADMIN] : accept book loan by loanId
-    * `/:bookId/reject` [POST] [Authorized] [ADMIN] : reject book loan by loanId
-    * `/:bookId/return` [POST] [Authorized] [ADMIN] : return loaned book 
+    * `/:loanId/reject` [POST] [Authorized] [ADMIN] : reject book loan by loanId
+    * `/:loanId/return` [POST] [Authorized] [ADMIN] : return loaned book 
