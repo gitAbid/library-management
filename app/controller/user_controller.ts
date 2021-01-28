@@ -142,14 +142,14 @@ export default class UserController {
                 if (err) {
                     handleError(res, err)
                 } else {
-                    handleSuccess(res, "", convertToBasiUsers(users))
+                    handleSuccess(res, "", convertToBasicUsers(users))
                 }
             }
         )
     }
 }
 
-function convertToBasiUsers(users: Array<IUser>) {
+function convertToBasicUsers(users: Array<IUser>) {
     return users.map(user => ({
         _id: user._id,
         name: user.name,
