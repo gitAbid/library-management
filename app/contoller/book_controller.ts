@@ -32,7 +32,7 @@ export default class BookController {
             (bookAuthors: Array<IBookAuthor>, err: any) => {
                 if (err) {
                     handleError(res, err);
-                } else {
+                } else if (bookAuthors && bookAuthors.length > 0) {
                     authorRepo.findAuthorsByIds(
                         bookAuthors?.map((bookAuthor) =>
                             mongoose.Types.ObjectId(bookAuthor.authorId)
@@ -40,22 +40,29 @@ export default class BookController {
                         (authors: Array<IAuthor>, err: any) => {
                             if (err) {
                                 handleError(res, err);
+                            } else if (authors && authors.length > 0) {
+                                handleSuccess(res, "", authors)
+                            } else {
+                                handleFailed(res, `No authors found for bookId ${bookId}`);
                             }
-                            handleSuccess(res, "", authors)
                         }
                     );
+                } else {
+                    handleFailed(res, `No authors found for bookId ${bookId}`);
                 }
             }
         );
     };
 
     getBookById = (req: Request, res: Response) => {
-        let {id} = req.params;
-        bookRepo.findById(id, (book: IBook, err: any) => {
+        let {bookId} = req.params;
+        bookRepo.findById(bookId, (book: IBook, err: any) => {
             if (err) {
                 handleError(res, err);
-            } else {
+            } else if (book) {
                 handleSuccess(res, "", book)
+            } else {
+                handleFailed(res, `No book found with bookId ${bookId}`)
             }
         });
     };
@@ -74,10 +81,10 @@ export default class BookController {
     };
 
     updateBook = (req: Request, res: Response) => {
-        let {id} = req.params;
+        let {bookId} = req.params;
         let reqBook = new Book(req.body);
 
-        bookRepo.findById(id, (book: IBook, err: any) => {
+        bookRepo.findById(bookId, (book: IBook, err: any) => {
             if (err) {
                 handleError(res, err);
             } else if (book) {
@@ -91,35 +98,35 @@ export default class BookController {
                     }
                 });
             } else {
-                handleFailed(res, `No book found with id ${id}`)
+                handleFailed(res, `No book found with id ${bookId}`)
             }
         });
     };
 
     deleteBook = (req: Request, res: Response) => {
-        let {id} = req.params;
+        let {bookId} = req.params;
 
-        bookRepo.deleteById(id, (result: any, err: any) => {
+        bookRepo.deleteById(bookId, (result: any, err: any) => {
             if (err) {
                 handleError(res, err);
             } else {
-                handleSuccess(res, `Book deleted with id ${id}`, {})
+                handleSuccess(res, `Book deleted with id ${bookId}`, {})
             }
         });
     };
 
     patchBook = (req: Request, res: Response) => {
-        let {id} = req.params;
+        let {bookId} = req.params;
         const book = new Book(req.body);
-        book._id = id;
-        bookRepo.findByIdAndUpdate(id, book, (updateBook: IBook, err: any) => {
+        book._id = bookId;
+        bookRepo.findByIdAndUpdate(bookId, book, (updateBook: IBook, err: any) => {
             if (err) {
                 handleError(res, err);
             } else if (book) {
                 updateAuthorBookRelation(book, res);
                 handleSuccess(res, "Book update successful", updateBook)
             } else {
-                handleFailed(res, `No book found with id ${id}`)
+                handleFailed(res, `No book found with id ${bookId}`)
             }
         });
     };

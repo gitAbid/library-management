@@ -8,14 +8,14 @@ const userRouter = express.Router();
 const userController = new UserController();
 
 
-userRouter.post("/", authenticateToken, authenticateRole([UserRole[UserRole.ADMIN]]),
+userRouter.get("/", authenticateToken, authenticateRole([UserRole[UserRole.ADMIN]]),
     userController.getAllUsers);
 
 userRouter.post("/authenticate", userController.authenticate);
 
 userRouter.post("/register", userController.register);
 
-userRouter.post("/profile", authenticateToken, authenticateRole([UserRole[UserRole.MEMBER],
+userRouter.get("/profile", authenticateToken, authenticateRole([UserRole[UserRole.MEMBER],
     UserRole[UserRole.ADMIN]]), userController.getUserProfileDetails);
 
 userRouter.post("/profile/upload", upload.single('file'),

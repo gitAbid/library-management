@@ -11,7 +11,7 @@ bookRouter
     .post(authenticateRole([UserRole[UserRole.ADMIN]]), bookController.addBook);
 
 bookRouter
-    .route("/:id")
+    .route("/:bookId")
     .get(authenticateRole([UserRole[UserRole.MEMBER],UserRole[UserRole.ADMIN]]),bookController.getBookById)
     .patch(authenticateRole([UserRole[UserRole.ADMIN]]),bookController.patchBook)
     .put(authenticateRole([UserRole[UserRole.ADMIN]]),bookController.updateBook)

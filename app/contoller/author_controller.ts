@@ -36,21 +36,23 @@ export default class AuthorController {
     };
 
     getAuthorById = (req: Request, res: Response) => {
-        let {id} = req.params;
-        authorRepo.findById(id, (author: IAuthor, err: any) => {
+        let {authorId} = req.params;
+        authorRepo.findById(authorId, (author: IAuthor, err: any) => {
             if (err) {
                 handleError(res, err);
-            } else {
+            } else if (author) {
                 handleSuccess(res, "", author)
+            } else {
+                handleFailed(res, `No author found with authorId ${authorId}`)
             }
         });
     };
 
     updateAuthor = (req: Request, res: Response) => {
-        let {id} = req.params;
+        let {authorId} = req.params;
         let reqAuthor = new Author(req.body);
 
-        authorRepo.findById(id, (author: IAuthor, err: any) => {
+        authorRepo.findById(authorId, (author: IAuthor, err: any) => {
             if (err) {
                 handleError(res, err);
             } else if (author) {
@@ -63,36 +65,33 @@ export default class AuthorController {
                     }
                 });
             } else {
-                return res.status(404).json({
-                    message: `No book found with id ${id}`,
-                });
+                handleFailed(res, `No author found with id ${authorId}`)
             }
         });
     };
 
     deleteAuthor = (req: Request, res: Response) => {
-        let {id} = req.params;
-
-        authorRepo.deleteById(id, (result: any, err: any) => {
+        let {authorId} = req.params;
+        authorRepo.deleteById(authorId, (result: any, err: any) => {
             if (err) {
                 handleError(res, err);
             } else {
-                handleSuccess(res, `Author deleted with id ${id}`, {})
+                handleSuccess(res, `Author deleted with id ${authorId}`, {})
             }
         });
     };
 
     patchAuthor = (req: Request, res: Response) => {
-        let {id} = req.params;
+        let {authorId} = req.params;
         const author = new Author(req.body);
-        author._id = id;
-        authorRepo.findByIdAndUpdate(id, author, (updateBook: IBook, err: any) => {
+        author._id = authorId;
+        authorRepo.findByIdAndUpdate(authorId, author, (updateAuthor: IBook, err: any) => {
             if (err) {
                 handleError(res, err);
             } else if (author) {
-                handleSuccess(res, "Author updated successfully", author)
+                handleSuccess(res, "Author updated successfully", updateAuthor)
             } else {
-                handleFailed(res, `No book found with id ${id}`)
+                handleFailed(res, `No book found with id ${authorId}`)
             }
         });
     };
@@ -104,7 +103,7 @@ export default class AuthorController {
             (bookAuthors: Array<IBookAuthor>, err: any) => {
                 if (err) {
                     handleError(res, err);
-                } else {
+                } else if (bookAuthors && bookAuthors.length > 0) {
                     bookRepo.findBooksByIds(
                         bookAuthors?.map((bookAuthor) =>
                             mongoose.Types.ObjectId(bookAuthor.bookId)
@@ -112,11 +111,15 @@ export default class AuthorController {
                         (books: Array<IBook>, err: any) => {
                             if (err) {
                                 handleError(res, err);
-                            } else {
+                            } else if (books && books.length > 0) {
                                 handleSuccess(res, "", books)
+                            } else {
+                                handleFailed(res, `No books found for authorId ${authorId}`)
                             }
                         }
                     );
+                } else {
+                    handleFailed(res, `No books found for authorId ${authorId}`)
                 }
             }
         );

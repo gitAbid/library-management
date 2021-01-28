@@ -12,7 +12,7 @@ authorRouter
    .post(authenticateRole([UserRole[UserRole.ADMIN]]), authorController.addAuthor);
 
 authorRouter
-  .route("/:id")
+  .route("/:authorId")
   .get(authenticateRole([UserRole[UserRole.MEMBER],UserRole[UserRole.ADMIN]]), authorController.getAuthorById)
   .patch(authenticateRole([UserRole[UserRole.ADMIN]]), authorController.patchAuthor)
   .put(authenticateRole([UserRole[UserRole.ADMIN]]), authorController.updateAuthor)
