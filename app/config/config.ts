@@ -12,7 +12,7 @@ const MONGO_OPTIONS = {
   retryWrites: false,
 };
 
-const MONGO_URL = process.env.MONGO_URL || `mongodb://localhost:27017/`;
+const MONGO_URL = process.env.MONGO_URL || 'mongodb://localhost:27017/library-management'
 
 const MONGO = {
   options: MONGO_OPTIONS,

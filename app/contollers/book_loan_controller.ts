@@ -6,9 +6,13 @@ import BookLoan from "../models/book_loan";
 import BookLoanRepository from "../repositorty/book_loan_repo";
 import BookRepository from "../repositorty/book_repo";
 import {handleError, handleFailed, handleResponseMessage, handleSuccess} from "../utils/util";
+import ObjectsToCsv from "objects-to-csv";
+import fs from "fs"
 
 const bookLoanRepo = new BookLoanRepository();
 const bookRep = new BookRepository();
+
+const CSV_FILE_TEMP_LOCATION = "./app/temp"
 
 export default class BookLoanController {
     requestBookLoan = (req: Request, res: Response) => {
@@ -58,6 +62,7 @@ export default class BookLoanController {
             );
         }
     };
+
     returnBookLoan = (req: Request, res: Response) => {
         let {loanId} = req.params;
 
@@ -194,8 +199,36 @@ export default class BookLoanController {
             }
         });
     };
+
+    exportBookLoans = (req: Request, res: Response) => {
+        bookLoanRepo.findAllBookLoans((loans: Array<IBookLoan>, err: any) => {
+            if (err) {
+                handleError(res, err);
+            } else {
+                const data = convertToNormalList(loans);
+                let csv = new ObjectsToCsv(data)
+                csv.toDisk(CSV_FILE_TEMP_LOCATION + '/book_loans.csv').then(() => {
+                    res.download(CSV_FILE_TEMP_LOCATION + '/book_loans.csv', () => {
+                        fs.unlinkSync(CSV_FILE_TEMP_LOCATION + '/book_loans.csv')
+                    })
+                }).catch((err) => {
+                    handleError(res, err)
+                })
+            }
+        });
+    }
 }
 
 function isBookAvailableForLoan(book: IBook) {
     return book.inventoryCount > book.loanCount;
+}
+
+function convertToNormalList(loans: Array<IBookLoan>) {
+    return loans.map(loan => ({
+        loanId: loan._id.toString(),
+        bookId: loan.bookId,
+        username: loan.username,
+        state: loan.loanState
+
+    }));
 }

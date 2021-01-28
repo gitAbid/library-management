@@ -15,7 +15,7 @@ const authorRepo = new AuthorRepository();
 const bookAuthorRepo = new BookAuthorRepository();
 
 export default class BookController {
-    allBooks = (req: Request, res: Response) => {
+    getAllBooks = (req: Request, res: Response) => {
         bookRepo.findAllBook((books: Array<IBook>, err: any) => {
             if (err) {
                 handleError(res, err);

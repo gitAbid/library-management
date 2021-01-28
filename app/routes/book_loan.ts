@@ -21,5 +21,7 @@ bookLoanRouter.post("/:loanId/accept", authenticateRole([UserRole[UserRole.ADMIN
 bookLoanRouter.post("/:loanId/reject", authenticateRole([UserRole[UserRole.ADMIN]]),
     bookLoanController.rejectLoanRequest);
 
+bookLoanRouter.get("/export", authenticateRole([UserRole[UserRole.ADMIN]]),
+    bookLoanController.exportBookLoans);
 
 export {bookLoanRouter};

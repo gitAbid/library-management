@@ -42,11 +42,11 @@ export const generateJWT = (user: IUser, callback: Function) => {
     );
 }
 
-export const authenticateRole = (roles: Array<String>) => {
+export const authenticateRole = (allowedRoles: Array<String>) => {
     return (req: Request, res: Response, next: any) => {
         const role = res.locals.user.role
         console.log(role)
-        if (role && roles.includes(role)) {
+        if (role && allowedRoles.includes(role)) {
             next()
         } else {
             handleResponseMessage(res, 403, "Access Denied", "User don't have permission to access this resource")

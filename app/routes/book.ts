@@ -7,7 +7,7 @@ const bookRouter = express.Router();
 const bookController = new BookController();
 bookRouter
     .route("/")
-    .get(authenticateRole([UserRole[UserRole.MEMBER], UserRole[UserRole.ADMIN]]), bookController.allBooks)
+    .get(authenticateRole([UserRole[UserRole.MEMBER], UserRole[UserRole.ADMIN]]), bookController.getAllBooks)
     .post(authenticateRole([UserRole[UserRole.ADMIN]]), bookController.addBook);
 
 bookRouter

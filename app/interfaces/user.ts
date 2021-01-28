@@ -5,7 +5,7 @@ export enum UserRole {
 }
 
 export default interface IUser extends Document {
-  name: String;
+  name: string;
   username: string;
   password: string;
   role: string;
