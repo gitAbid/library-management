@@ -42,7 +42,7 @@ There're 2 types of api endpoint in this application in perspective of security.
     * `/` [GET] [Authorized] [ADMIN] : gets all users details
 
     * `/register` [POST] [Unauthorized] : register new user
-      ```javascript
+      ```
       #Sample Requesr
       {
          "name":"Admin",
@@ -52,7 +52,7 @@ There're 2 types of api endpoint in this application in perspective of security.
       }
       ```
     * `/authenticate`[POST] [Unauthorized] : authenticate and get token for accessing other protected endpoint
-      ```json
+      ```
       #Sample request
       {
         "username":"admin",
@@ -62,7 +62,7 @@ There're 2 types of api endpoint in this application in perspective of security.
     * `/profile` [GET] [Authorized] [ADMIN,MEMBER]: get profile details of user based on token
 
     * `/profile/upload` [POST] [Authorized] [ADMIN,MEMBER] : upload profile pictures for user based on token
-      ```json
+      ```
         #Required Header
         file: <FILE_TO_BE_UPLOADED> 
       ```
@@ -73,7 +73,7 @@ There're 2 types of api endpoint in this application in perspective of security.
 
     * `/` [GET] [Authorized] [ADMIN,MEMBER] : gets all books
     * `/` [POST] [Authorized] [ADMIN] : add book
-      ```json
+      ```
        #Sample request
        {
         "authors": [], #Optional array of author Ids
@@ -89,7 +89,7 @@ There're 2 types of api endpoint in this application in perspective of security.
     * `/:bookId`[DELETE] [Authorized] [ADMIN] : delete book by bookId
     * `/:bookId`[PUT] [Authorized] [ADMIN] : update book info by bookId and all mandatory field
       required [Can't update loanCount through PUT]
-      ```json
+      ```
       #Sample Request
       {
         "title": "Harry Poter 9",
@@ -102,7 +102,7 @@ There're 2 types of api endpoint in this application in perspective of security.
       }
 
     * `/:bookId`[PATCH] [Authorized] [ADMIN] : update book property by bookId
-      ```json
+      ```
       #Sample Request
       {
          "inventoryCount": 3,
@@ -116,7 +116,7 @@ There're 2 types of api endpoint in this application in perspective of security.
 
     * `/` [GET] [Authorized] [ADMIN,MEMBER] : gets all authors
     * `/` [POST] [Authorized] [ADMIN] : add author
-      ```json
+      ```
        #Sample request
        {
         "name": "J. K. Rowling 3",
@@ -130,7 +130,7 @@ There're 2 types of api endpoint in this application in perspective of security.
     * `/:authorId`[DELETE] [Authorized] [ADMIN] : delete author by authorId
     * `/:authorId`[PUT] [Authorized] [ADMIN] : update author info by authorId and all mandatory field required
 
-      ```json
+      ```
       #Sample Request
       {
         "name": "J. K. Rowling",
@@ -142,7 +142,7 @@ There're 2 types of api endpoint in this application in perspective of security.
       ```
 
     * `/:authorId`[PATCH] [Authorized] [ADMIN] : update author property by authorId
-      ```json
+      ```
       #Sample Request
       {
         "bio": "Joanne Rowling CH, OBE, HonFRSE, FRCPE, FRSL, better known by her pen name J. K. Rowling, is a British author and philanthropist. She is best known for writing the Harry Potter fantasy series, which has won multiple awards and sold more than 500 million copies, becoming the best-selling book series in history",
