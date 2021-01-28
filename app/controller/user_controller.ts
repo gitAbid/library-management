@@ -112,6 +112,8 @@ export default class UserController {
                     handleFailed(res, `No user found`)
                 }
             })
+        } else {
+            handleError(res, new Error("Some went wrong while uploading images. Please try again"))
         }
     };
 
