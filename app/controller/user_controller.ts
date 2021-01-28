@@ -113,7 +113,7 @@ export default class UserController {
                 }
             })
         } else {
-            handleError(res, new Error("Some went wrong while uploading images. Please try again"))
+            handleError(res, new Error("Something went wrong while uploading profile image. Please try again"))
         }
     };
 
